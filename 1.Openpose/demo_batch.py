@@ -12,7 +12,7 @@ from src.hand import Hand
 
 def load_model(model_type='coco', use_hand=False):
     if model_type == 'body25':
-        model_path = './model/pose_iter_584000.caffemodel.pt'
+        model_path = 'model/pose_iter_584000.caffemodel.pt'
     else:
         model_path = './model/body_pose_model.pth'
     body_estimation = Body(model_path, model_type)
@@ -52,7 +52,7 @@ if __name__ == "__main__":
         model_type=model_type, use_hand=True)
     
     # 처리할 이미지 경로 설정
-    test_image_path = '/Users/parkyunsu/Downloads/00002_00.jpg'
+    test_image_path = '/Users/parkyunsu/Downloads/00022_00.jpg'
     oriImg = cv2.imread(test_image_path)  # B,G,R order
     
     output_path = 'test_results'
