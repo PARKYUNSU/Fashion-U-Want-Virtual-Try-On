@@ -1,4 +1,5 @@
 import os
+import subprocess
 import warnings
 import cv2
 import glob
@@ -43,19 +44,30 @@ def process_graphonomy(input_path, output_path):
     """
     print("Generate semantic segmentation using Graphonomy-Master library\n")
 
-    # 절대 경로로 img_path 설정
+    # 절대 경로로 img_path와 output_path 설정
     absolute_input_path = os.path.abspath(input_path)
     absolute_output_path = os.path.abspath(output_path)
 
-    # Graphonomy-Master 실행
-    terminal_command = (
-        f"python ./Graphonomy-master/exp/inference/inference.py "
-        f"--loadmodel ./Graphonomy-master/inference.pth "
-        f"--img_path {absolute_input_path} --output_path {absolute_output_path} "
-        f"--output_name resized_segmentation_img"
-    )
-    print(f"Executing: {terminal_command}")
-    os.system(terminal_command)
+    # PYTHONPATH 환경 변수 설정 및 Graphonomy-Master 실행
+    terminal_command = [
+        "python",
+        "./Graphonomy-master/exp/inference/inference.py",
+        "--loadmodel", "./Graphonomy-master/inference.pth",
+        "--img_path", absolute_input_path,
+        "--output_path", absolute_output_path,
+        "--output_name", "resized_segmentation_img"
+    ]
+    env = os.environ.copy()
+    env["PYTHONPATH"] = os.path.abspath("./Graphonomy-master")
+    
+    print(f"Executing: {' '.join(terminal_command)}")
+    
+    try:
+        # subprocess.run을 사용하여 실행
+        subprocess.run(terminal_command, env=env, check=True, text=True)
+        print("Graphonomy-Master processing completed successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error during Graphonomy-Master processing: {e.stderr}")
 
 def run_hr_viton(background_flag):
     """
