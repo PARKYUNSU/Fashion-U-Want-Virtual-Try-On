@@ -83,7 +83,7 @@ def main():
     print("Generate semantic segmentation using Graphonomy-Master library\n")
     os.chdir("./Graphonomy-master")
     terminal_command = f"python exp/inference/inference.py --loadmodel ./inference.pth --img_path {input_path} --output_path {output_parse_path} --output_name resized_segmentation_img"
-    os.system(terminnal_command)
+    os.system(terminal_command)
     os.chdir("../")
     
     # Grayscale 세그멘테이션 처리
@@ -94,8 +94,8 @@ def main():
     # Run HR-VITON to generate final image
     print("\nRun HR-VITON to generate final image\n")
     os.chdir("./HR-VITON-main")
-    terminnal_command = "python3 test_generator.py --cuda True --test_name test1 --tocg_checkpoint mtviton.pth --gpu_ids 0 --gen_checkpoint gen.pth --datasetting unpaired --data_list t2.txt --dataroot ./test"
-    os.system(terminnal_command)
+    terminal_command = "python3 test_generator.py --cuda True --test_name test1 --tocg_checkpoint mtviton.pth --gpu_ids 0 --gen_checkpoint gen.pth --datasetting unpaired --data_list t2.txt --dataroot ./test"
+    os.system(terminal_command)
     os.chdir("../")
 
     # Add or remove background in HR-VITON output
