@@ -38,36 +38,54 @@ def process_densepose(input_dir, output_dir):
         print(f"Saved DensePose result to {output_image_path}")
 
 
+import os
+
 def process_graphonomy(input_path, output_path):
     """
-    Graphonomy-Master를 사용한 세분화 결과 생성
+    Graphonomy-Master를 사용한 세분화 결과 생성 (디렉토리 내부의 개별 이미지를 처리)
     """
     print("Generate semantic segmentation using Graphonomy-Master library\n")
 
-    # 절대 경로로 img_path와 output_path 설정
-    absolute_input_path = os.path.abspath(input_path)
+    # 절대 경로로 output_path 설정
     absolute_output_path = os.path.abspath(output_path)
+    os.makedirs(absolute_output_path, exist_ok=True)
 
-    # PYTHONPATH 환경 변수 설정 및 Graphonomy-Master 실행
-    terminal_command = [
-        "python",
-        "./Graphonomy-master/exp/inference/inference.py",
-        "--loadmodel", "./Graphonomy-master/inference.pth",
-        "--img_path", absolute_input_path,
-        "--output_path", absolute_output_path,
-        "--output_name", "resized_segmentation_img"
+    # input_path 디렉토리 내부의 이미지 파일 목록 가져오기
+    image_files = [
+        os.path.join(input_path, f)
+        for f in os.listdir(input_path)
+        if f.endswith(('.jpg', '.png'))
     ]
-    env = os.environ.copy()
-    env["PYTHONPATH"] = os.path.abspath("./Graphonomy-master")
-    
-    print(f"Executing: {' '.join(terminal_command)}")
-    
-    try:
-        # subprocess.run을 사용하여 실행
-        subprocess.run(terminal_command, env=env, check=True, text=True)
-        print("Graphonomy-Master processing completed successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error during Graphonomy-Master processing: {e.stderr}")
+
+    if not image_files:
+        print("No image files found in the input directory.")
+        return
+
+    for image_file in image_files:
+        absolute_input_file = os.path.abspath(image_file)
+        image_name = os.path.splitext(os.path.basename(image_file))[0]
+        output_name = f"{image_name}_segmentation"
+
+        # Graphonomy-Master 실행
+        terminal_command = [
+            "python",
+            "./Graphonomy-master/exp/inference/inference.py",
+            "--loadmodel", "./Graphonomy-master/inference.pth",
+            "--img_path", absolute_input_file,
+            "--output_path", absolute_output_path,
+            "--output_name", output_name
+        ]
+
+        print(f"Processing image: {absolute_input_file}")
+        print(f"Executing: {' '.join(terminal_command)}")
+
+        try:
+            # subprocess.run을 사용하여 실행
+            subprocess.run(terminal_command, env={"PYTHONPATH": os.path.abspath("./Graphonomy-master")}, check=True, text=True)
+            print(f"Processing completed for image: {absolute_input_file}")
+        except subprocess.CalledProcessError as e:
+            print(f"Error during processing for image: {absolute_input_file}\n{e.stderr}")
+
 
 def run_hr_viton(background_flag):
     """
