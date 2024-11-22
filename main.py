@@ -46,14 +46,14 @@ def main():
     body_estimation, hand_estimation = load_model(use_hand=True)
 
     # 경로 설정
-    input_path = './input/image'  # 입력 이미지 경로
+    input_path = './input/image'
     output_openpose_image_path = './output/openpose_img'
     output_openpose_json_path = './output/openpose_json'
     output_densepose_path = './output/image-densepose'
     output_clothseg_path = './output/cloth_segment'
     output_parse_path = './output/human_parse'
 
-    # 출력 디렉토리 생성
+    # 출력 디렉토리
     os.makedirs(output_openpose_image_path, exist_ok=True)
     os.makedirs(output_openpose_json_path, exist_ok=True)
     os.makedirs(output_densepose_path, exist_ok=True)
@@ -62,7 +62,7 @@ def main():
 
     # 입력 디렉토리의 모든 이미지 처리
     for image_name in os.listdir(input_path):
-        if not image_name.endswith(('.jpg', '.png')):  # 이미지 파일만 처리
+        if not image_name.endswith(('.jpg', '.png')):
             continue
 
         image_path = os.path.join(input_path, image_name)
@@ -82,7 +82,7 @@ def main():
     # Graphonomy-Master를 사용한 세분화 결과 생성
     print("Generate semantic segmentation using Graphonomy-Master library\n")
     os.chdir("./Graphonomy-master")
-    terminnal_command = "python exp/inference/inference.py --loadmodel ./inference.pth --img_path ../resized_img.jpg --output_path ../ --output_name /resized_segmentation_img"
+    terminal_command = f"python exp/inference/inference.py --loadmodel ./inference.pth --img_path {input_path} --output_path {output_parse_path} --output_name resized_segmentation_img"
     os.system(terminnal_command)
     os.chdir("../")
     
@@ -101,8 +101,8 @@ def main():
     # Add or remove background in HR-VITON output
     print("\nProcessing HR-VITON output images")
     l = glob.glob("./HR-VITON-main/Output/*.png")
-    mask_img = cv2.imread('./output/image-densepose/mask.png', cv2.IMREAD_GRAYSCALE)  # 마스크 예시
-    back_ground = cv2.imread('./input/background.jpg')  # 배경 예시
+    mask_img = cv2.imread('./output/image-densepose/mask.png', cv2.IMREAD_GRAYSCALE)
+    back_ground = cv2.imread('./input/background.jpg')
 
     if opt.background:
         for i in l:
@@ -116,7 +116,6 @@ def main():
             cv2.imwrite(i, img)
 
     print("All processing is complete.")
-
 
 if __name__ == "__main__":
     main()
