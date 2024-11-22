@@ -42,14 +42,20 @@ def process_graphonomy(input_path, output_path):
     Graphonomy-Master를 사용한 세분화 결과 생성
     """
     print("Generate semantic segmentation using Graphonomy-Master library\n")
-    os.chdir("./Graphonomy-master")
-    terminal_command = (
-        f"python exp/inference/inference.py --loadmodel ./inference.pth "
-        f"--img_path {input_path} --output_path {output_path} --output_name resized_segmentation_img"
-    )
-    os.system(terminal_command)
-    os.chdir("../")
 
+    # 절대 경로로 img_path 설정
+    absolute_input_path = os.path.abspath(input_path)
+    absolute_output_path = os.path.abspath(output_path)
+
+    # Graphonomy-Master 실행
+    terminal_command = (
+        f"python ./Graphonomy-master/exp/inference/inference.py "
+        f"--loadmodel ./Graphonomy-master/inference.pth "
+        f"--img_path {absolute_input_path} --output_path {absolute_output_path} "
+        f"--output_name resized_segmentation_img"
+    )
+    print(f"Executing: {terminal_command}")
+    os.system(terminal_command)
 
 def run_hr_viton(background_flag):
     """
