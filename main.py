@@ -17,14 +17,14 @@ if __name__ == '__main__':
 
     img=cv2.imread("./input/model.jpg")
     model_img=cv2.resize(img,(768,1024))
-    cv2.imwrite("./model.jpg", model_img)
+    cv2.imwrite("./model_img.jpg", model_img)
 
-    img=cv2.imread("model.jpg")
+    img=cv2.imread("model_img.jpg")
     img=cv2.resize(img,(384,512))
     cv2.imwrite('resized_model.jpg',img)
-
+    
+    os.chdir("../")
     # Get mask of cloth
-    os.chdir("./Fashion_Segmentation")
     print("Get mask of cloth\n")
     terminnal_command = "python clothseg.py" 
     os.system(terminnal_command)
