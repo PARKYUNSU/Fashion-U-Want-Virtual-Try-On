@@ -5,8 +5,6 @@ import numpy as np
 import cv2
 import glob
 import argparse
-from openpose import load_model, inference_and_save
-from clothseg import process_images
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
