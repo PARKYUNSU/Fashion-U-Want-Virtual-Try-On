@@ -94,17 +94,15 @@ if __name__ == "__main__":
     body_estimation, hand_estimation = load_model(use_hand=True)
 
     # 입력 및 출력 경로 설정
-    input_path = './input/image'
+    input_path = './input/model.jpg'  # 단일 이미지 파일 경로
     output_json_path = './HR-VITON-main/test/test/openpose_json'  # JSON 저장 경로
 
     # Ensure output directory exists
     os.makedirs(output_json_path, exist_ok=True)
 
-    # 입력 디렉토리 내 모든 이미지 처리
-    for image_name in os.listdir(input_path):
-        if not image_name.endswith(('.jpg', '.png')):  # 이미지 파일만 처리
-            continue
+    # 단일 이미지 처리
+    if not input_path.endswith(('.jpg', '.png')):
+        raise ValueError(f"Unsupported file format: {input_path}")
 
-        image_path = os.path.join(input_path, image_name)
-        print(f'Processing: {image_path}')
-        inference_and_save(image_path, body_estimation, hand_estimation, output_json_path)
+    print(f'Processing: {input_path}')
+    inference_and_save(input_path, body_estimation, hand_estimation, output_json_path)

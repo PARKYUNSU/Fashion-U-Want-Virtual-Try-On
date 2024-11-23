@@ -6,7 +6,7 @@ from carvekit.web.utils.init_utils import init_interface
 import cv2
 
 
-def process_images(input_path="input/cloth", 
+def process_images(input_path="./input/cloth.jpg", 
                    cloth_output_path="./HR-VITON-main/test/test/cloth",
                    mask_output_path="./HR-VITON-main/test/test/cloth-mask",
                    segmentation_network="u2net", 
@@ -77,7 +77,7 @@ def process_images(input_path="input/cloth",
 
 
 if __name__ == "__main__":
-    input_path = "input/cloth"  # Path to input images
+    input_path = "./input/cloth.jpg"  # Path to input images
     cloth_output_path = "./HR-VITON-main/test/test/cloth"  # Path to save original images
     mask_output_path = "./HR-VITON-main/test/test/cloth-mask"  # Path to save masks
     process_images(input_path, cloth_output_path, mask_output_path)
