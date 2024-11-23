@@ -3,6 +3,7 @@ from PIL import Image
 import pickle
 import json
 import numpy as np
+import os
 
 img = Image.open('./resized_segmentation_img.png')
 img_w ,img_h = img.size
