@@ -15,7 +15,7 @@ if __name__ == '__main__':
     opt = parser.parse_args()
 
     img=cv2.imread("./input/model.jpg")
-    model_img=cv2.resized(img, (768,1024))
+    model_img=cv2.resize(img,(768,1024))
     cv2.imwrite("./model.jpg", model_img)
 
     img=cv2.imread("model.jpg")
