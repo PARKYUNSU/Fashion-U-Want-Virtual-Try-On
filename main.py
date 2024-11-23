@@ -90,4 +90,4 @@ if __name__ == '__main__':
 
     print("All processing is complete.")
     os.chdir("../")
-    cv2.imwrite("./static/finalimg.png", img)
+    cv2.imwrite("./input/finalimg.png", img)

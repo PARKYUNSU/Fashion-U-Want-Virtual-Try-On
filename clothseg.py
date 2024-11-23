@@ -31,53 +31,54 @@ def process_images(input_path="./input/cloth.jpg",
     os.makedirs(cloth_output_path, exist_ok=True)
     os.makedirs(mask_output_path, exist_ok=True)
 
-    # Collect all images from the input path
-    imgs = [os.path.join(input_path, name) for name in os.listdir(input_path) if name.endswith(('jpg', 'jpeg', 'png'))]
+    # Read the single input image
+    if not os.path.isfile(input_path):
+        raise FileNotFoundError(f"Input path is not a valid file: {input_path}")
 
-    # Process images
-    processed_images = interface(imgs)
+    print(f"Processing file: {input_path}")
+    original_image = cv2.imread(input_path)
+    if original_image is None:
+        raise ValueError(f"Failed to read the image file: {input_path}")
 
-    # Save the output masks and original images
-    for i, im in enumerate(processed_images):
-        # Original image
-        original_image = cv2.imread(imgs[i])
-        
-        # Preprocessing: Ensure image size compatibility
-        if original_image.shape[1] <= 600 and original_image.shape[0] <= 500:
-            original_image = cv2.resize(original_image, 
-                                        (int(original_image.shape[1] * 1.2), int(original_image.shape[0] * 1.2)))
-        
-        # Segmentation mask
-        img = np.array(im)
-        img = img[..., :3]  # Remove alpha channel if exists
-        idx = ((img[..., 0] == 0) & (img[..., 1] == 0) & (img[..., 2] == 0)) | \
-              ((img[..., 0] == 130) & (img[..., 1] == 130) & (img[..., 2] == 130))
-        mask = np.ones(idx.shape) * 255
-        mask[idx] = 0  # Convert background to black and object to white
+    # Process the image
+    processed_image = interface([input_path])[0]
 
-        # Resize the mask if needed
-        mask_resized = cv2.resize(mask, (original_image.shape[1], original_image.shape[0]), interpolation=cv2.INTER_NEAREST)
+    # Preprocessing: Ensure image size compatibility
+    if original_image.shape[1] <= 600 and original_image.shape[0] <= 500:
+        original_image = cv2.resize(original_image, 
+                                    (int(original_image.shape[1] * 1.2), int(original_image.shape[0] * 1.2)))
+    
+    # Segmentation mask
+    img = np.array(processed_image)
+    img = img[..., :3]  # Remove alpha channel if exists
+    idx = ((img[..., 0] == 0) & (img[..., 1] == 0) & (img[..., 2] == 0)) | \
+          ((img[..., 0] == 130) & (img[..., 1] == 130) & (img[..., 2] == 130))
+    mask = np.ones(idx.shape) * 255
+    mask[idx] = 0  # Convert background to black and object to white
 
-        # Create output canvas
-        canvas_shape = (1024, 768, 3)
-        output_canvas = np.full(canvas_shape, 255, dtype=np.uint8)
-        mask_canvas = np.zeros((1024, 768), dtype=np.uint8)
+    # Resize the mask if needed
+    mask_resized = cv2.resize(mask, (original_image.shape[1], original_image.shape[0]), interpolation=cv2.INTER_NEAREST)
 
-        # Center the image and mask
-        h, w, _ = original_image.shape
-        y_offset = (1024 - h) // 2
-        x_offset = (768 - w) // 2
-        output_canvas[y_offset:y_offset + h, x_offset:x_offset + w] = original_image
-        mask_canvas[y_offset:y_offset + h, x_offset:x_offset + w] = mask_resized
+    # Create output canvas
+    canvas_shape = (1024, 768, 3)
+    output_canvas = np.full(canvas_shape, 255, dtype=np.uint8)
+    mask_canvas = np.zeros((1024, 768), dtype=np.uint8)
 
-        # Save results
-        output_name = "00001_00"  # 고정된 파일 이름
-        cv2.imwrite(os.path.join(cloth_output_path, f"{output_name}.jpg"), output_canvas)
-        cv2.imwrite(os.path.join(mask_output_path, f"{output_name}.jpg"), mask_canvas)
+    # Center the image and mask
+    h, w, _ = original_image.shape
+    y_offset = (1024 - h) // 2
+    x_offset = (768 - w) // 2
+    output_canvas[y_offset:y_offset + h, x_offset:x_offset + w] = original_image
+    mask_canvas[y_offset:y_offset + h, x_offset:x_offset + w] = mask_resized
+
+    # Save results
+    output_name = "00001_00"  # Fixed output name
+    cv2.imwrite(os.path.join(cloth_output_path, f"{output_name}.jpg"), output_canvas)
+    cv2.imwrite(os.path.join(mask_output_path, f"{output_name}.jpg"), mask_canvas)
 
 
 if __name__ == "__main__":
-    input_path = "./input/cloth.jpg"  # Path to input images
-    cloth_output_path = "./HR-VITON-main/test/test/cloth"  # Path to save original images
+    input_path = "./input/cloth.jpg"  # Path to input image
+    cloth_output_path = "./HR-VITON-main/test/test/cloth"  # Path to save processed images
     mask_output_path = "./HR-VITON-main/test/test/cloth-mask"  # Path to save masks
     process_images(input_path, cloth_output_path, mask_output_path)
