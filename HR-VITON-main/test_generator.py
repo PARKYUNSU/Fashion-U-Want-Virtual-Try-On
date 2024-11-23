@@ -129,7 +129,7 @@ def test(opt, test_loader, tocg, generator):
                 #im = inputs['image']
                 #input_label=label.cuda(),
                 input_parse_agnostic = parse_agnostic.cuda()
-                pre_clothes_mask = torch.FloatTensor((pre_clothes_mask.detach().cpu().numpy() > 0.5).astype(np.float)).cuda()
+                pre_clothes_mask = torch.FloatTensor((pre_clothes_mask.detach().cpu().numpy() > 0.5).astype(float)).cuda()
             else :
                 #pose_map = inputs['pose']
                 pre_clothes_mask = inputs['cloth_mask'][opt.datasetting]
