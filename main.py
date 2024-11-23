@@ -38,6 +38,8 @@ if __name__ == '__main__':
     os.system(terminnal_command)
     os.chdir("../")
 
+    output_dir = "./HR-VITON-main/test/test/image"
+    os.makedirs(output_dir, exist_ok=True)
     # Remove background image using semantic segmentation mask
     mask_img=cv2.imread('./resized_segmentation_img.png',cv2.IMREAD_GRAYSCALE)
     mask_img=cv2.resize(mask_img,(768,1024))
@@ -46,6 +48,7 @@ if __name__ == '__main__':
     img_seg=cv2.bitwise_and(model_img,model_img,mask=mask_img)
     back_ground=model_img-img_seg
     img_seg=np.where(img_seg==0,215,img_seg)
+    
     cv2.imwrite("./seg_img.png",img_seg)
     img=cv2.resize(img_seg,(768,1024))
     cv2.imwrite('./HR-VITON-main/test/test/image/00001_00.jpg',img)

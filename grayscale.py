@@ -42,6 +42,17 @@ for y_idx in range(img.shape[0]):
         else:
             gray_img[y_idx][x_idx] = 0
 
-img=cv2.resize(gray_img,(768,1024),interpolation=cv2.INTER_NEAREST)
-bg_img = Image.fromarray(np.uint8(img),"L")
-bg_img.save("./HR-VITON-main/test/test/image-parse-v3/00001_00.png")
+# Resize the grayscale image
+img = cv2.resize(gray_img, (768, 1024), interpolation=cv2.INTER_NEAREST)
+
+# Convert to PIL Image
+bg_img = Image.fromarray(np.uint8(img), "L")
+
+# Ensure the output directory exists
+output_dir = "./HR-VITON-main/test/test/image-parse-v3/"
+os.makedirs(output_dir, exist_ok=True)
+
+# Save the image to the specified path
+output_file = os.path.join(output_dir, "00001_00.png")
+bg_img.save(output_file)
+print(f"Image saved to {output_file}")
