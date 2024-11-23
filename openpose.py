@@ -13,8 +13,7 @@ def load_model(use_hand=False):
     hand_estimation = Hand('./model/hand_pose_model.pth') if use_hand else None
     return body_estimation, hand_estimation
 
-
-def inference_and_save(image_path, body_estimation, hand_estimation, output_image_path, output_json_path):
+def inference_and_save(image_path, body_estimation, hand_estimation, output_json_path):
     oriImg = cv2.imread(image_path)  # B,G,R order
     if oriImg is None:
         print(f"Error: Could not read image from path {image_path}")
@@ -38,17 +37,9 @@ def inference_and_save(image_path, body_estimation, hand_estimation, output_imag
             peaks[:, 0] = np.where(peaks[:, 0] == 0, peaks[:, 0], peaks[:, 0]+x)
             peaks[:, 1] = np.where(peaks[:, 1] == 0, peaks[:, 1], peaks[:, 1]+y)
             all_hand_peaks.append(peaks)
-        canvas = util.draw_handpose(canvas, all_hand_peaks)
 
-    # 결과 저장 (이미지)
-    img_basename = os.path.basename(image_path).split('.')[0]
-    rendered_image_path = os.path.join(output_image_path, f"{img_basename}_rendered.png")
-    cv2.imwrite(rendered_image_path, canvas)
-    print(f"Rendered image saved at {rendered_image_path}")
-
-    # 결과 저장 (JSON)
-    json_filename = f"{img_basename}_keypoints.json"
-    json_path = os.path.join(output_json_path, json_filename)
+    # JSON 저장 경로와 이름 설정
+    json_path = os.path.join(output_json_path, "00001_00_keypoints.json")
 
     # Prepare JSON output
     json_data = {"version": 1.3, "people": []}
@@ -104,11 +95,9 @@ if __name__ == "__main__":
 
     # 입력 및 출력 경로 설정
     input_path = './input/image'
-    output_image_path = './output/openpose_img'
-    output_json_path = './output/openpose_json'
+    output_json_path = './HR-VITON-main/test/test/openpose_json'  # JSON 저장 경로
 
-    # Ensure output directories exist
-    os.makedirs(output_image_path, exist_ok=True)
+    # Ensure output directory exists
     os.makedirs(output_json_path, exist_ok=True)
 
     # 입력 디렉토리 내 모든 이미지 처리
@@ -118,4 +107,4 @@ if __name__ == "__main__":
 
         image_path = os.path.join(input_path, image_name)
         print(f'Processing: {image_path}')
-        inference_and_save(image_path, body_estimation, hand_estimation, output_image_path, output_json_path)
+        inference_and_save(image_path, body_estimation, hand_estimation, output_json_path)
