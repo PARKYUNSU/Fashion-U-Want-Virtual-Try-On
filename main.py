@@ -23,7 +23,6 @@ if __name__ == '__main__':
     img=cv2.resize(img,(384,512))
     cv2.imwrite('resized_model.jpg',img)
     
-    os.chdir("../")
     # Get mask of cloth
     print("Get mask of cloth\n")
     terminnal_command = "python clothseg.py" 
