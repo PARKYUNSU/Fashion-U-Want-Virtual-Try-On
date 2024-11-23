@@ -53,7 +53,7 @@ if __name__ == '__main__':
     cv2.imwrite('./HR-VITON-main/test/test/image/00001_00.jpg',img)
 
     # Generate grayscale semantic segmentation image
-    os.chdir("./Fashion_Segmentation")
+    print("Current working directory:", os.getcwd())
     terminnal_command ="grayscale.py"
     os.system(terminnal_command)
 
