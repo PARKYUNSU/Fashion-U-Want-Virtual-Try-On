@@ -1,6 +1,7 @@
 import os
 import subprocess
 import warnings
+import numpy as np
 import cv2
 import glob
 import argparse
