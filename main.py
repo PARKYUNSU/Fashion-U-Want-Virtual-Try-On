@@ -13,7 +13,7 @@ if __name__ == '__main__':
     parser.add_argument('--background', type=bool, default=True, help='Define removing background or not')
     opt = parser.parse_args()
 
-    img=cv2.imread("./input/pre_model.jpg")
+    img=cv2.imread("./input/model.jpg")
     model_img=cv2.resize(img,(768,1024))
     cv2.imwrite("./model.jpg", model_img)
 
