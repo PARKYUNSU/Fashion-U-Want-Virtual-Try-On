@@ -24,13 +24,14 @@ if __name__ == '__main__':
     cv2.imwrite('resized_model.jpg',img)
 
     # Get mask of cloth
+    os.chdir("./Fashion_Segmentation")
     print("Get mask of cloth\n")
-    terminnal_command = "clothseg.py" 
+    terminnal_command = "python clothseg.py" 
     os.system(terminnal_command)
 
     # Get openpose coordinate using posenet
     print("Get openpose coordinate using posenet\n")
-    terminnal_command = "openpose.py" 
+    terminnal_command = "python openpose.py" 
     os.system(terminnal_command)
 
     # Generate semantic segmentation using Graphonomy-Master library
