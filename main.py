@@ -52,7 +52,7 @@ if __name__ == '__main__':
     img=cv2.resize(img_seg,(768,1024))
     cv2.imwrite('./HR-VITON-main/test/test/image/00001_00.jpg',img)
 
-    terminnal_command ="grayscale.py"
+    terminnal_command ="python grayscale.py"
     os.system(terminnal_command)
 
     # Generate Densepose image using detectron2 library
