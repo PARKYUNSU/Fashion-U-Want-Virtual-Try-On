@@ -9,7 +9,6 @@ from clothseg import process_images
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--background', type=bool, default=True, help='Define removing background or not')
