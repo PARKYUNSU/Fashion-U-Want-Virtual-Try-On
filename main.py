@@ -15,13 +15,13 @@ if __name__ == '__main__':
     parser.add_argument('--background', type=bool, default=True, help='Define removing background or not')
     opt = parser.parse_args()
 
-    img=cv2.imread("./input/model.jpg")
+    img=cv2.imread("./input/pre_model.jpg")
     model_img=cv2.resize(img,(768,1024))
-    cv2.imwrite("./model_img.jpg", model_img)
+    cv2.imwrite("./model.jpg", model_img)
 
-    img=cv2.imread("model_img.jpg")
+    img=cv2.imread("model.jpg")
     img=cv2.resize(img,(384,512))
-    cv2.imwrite('resized_model.jpg',img)
+    cv2.imwrite('resized_img.jpg',img)
     
     # Get mask of cloth
     print("Get mask of cloth\n")
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     # Generate semantic segmentation using Graphonomy-Master library
     print("Generate semantic segmentation using Graphonomy-Master library\n")
     os.chdir("./Graphonomy-master")
-    terminnal_command ="python exp/inference/inference.py --loadmodel ./inference.pth --img_path ../resized_model.jpg --output_path ../ --output_name /resized_segmentation_img"
+    terminnal_command ="python exp/inference/inference.py --loadmodel ./inference.pth --img_path ../resized_img.jpg --output_path ../ --output_name /resized_segmentation_img"
     os.system(terminnal_command)
     os.chdir("../")
 
@@ -52,8 +52,6 @@ if __name__ == '__main__':
     img=cv2.resize(img_seg,(768,1024))
     cv2.imwrite('./HR-VITON-main/test/test/image/00001_00.jpg',img)
 
-    # Generate grayscale semantic segmentation image
-    print("Current working directory:", os.getcwd())
     terminnal_command ="grayscale.py"
     os.system(terminnal_command)
 
