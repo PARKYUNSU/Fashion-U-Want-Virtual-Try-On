@@ -1,6 +1,11 @@
+# Fashion-U-Want: Virtual Try-On
+
+
+
+
 
  
-# Fashion-U-Want: Virtual Try-On Demo
+
 
 Experience a seamless virtual try-on experience directly in your browser using Google Colab.
 
