@@ -44,6 +44,37 @@ class CPDatasetTest(data.Dataset):
 
     def name(self):
         return "CPDataset"
+    def get_parse_agnostic(self, parse, pose_data):
+        parse_array = np.array(parse)
+        parse_upper = ((parse_array == 5).astype(np.float32) +
+                       (parse_array == 6).astype(np.float32) +
+                       (parse_array == 7).astype(np.float32))
+        parse_neck = (parse_array == 10).astype(np.float32)
+
+        r = 10
+        agnostic = parse.copy()
+
+        # mask arms
+        for parse_id, pose_ids in [(14, [2, 5, 6, 7]), (15, [5, 2, 3, 4])]:
+            mask_arm = Image.new('L', (self.fine_width, self.fine_height), 'black')
+            mask_arm_draw = ImageDraw.Draw(mask_arm)
+            i_prev = pose_ids[0]
+            for i in pose_ids[1:]:
+                if (pose_data[i_prev, 0] == 0.0 and pose_data[i_prev, 1] == 0.0) or (pose_data[i, 0] == 0.0 and pose_data[i, 1] == 0.0):
+                    continue
+                mask_arm_draw.line([tuple(pose_data[j]) for j in [i_prev, i]], 'white', width=r*10)
+                pointx, pointy = pose_data[i]
+                radius = r*4 if i == pose_ids[-1] else r*15
+                mask_arm_draw.ellipse((pointx-radius, pointy-radius, pointx+radius, pointy+radius), 'white', 'white')
+                i_prev = i
+            parse_arm = (np.array(mask_arm) / 255) * (parse_array == parse_id).astype(np.float32)
+            agnostic.paste(0, None, Image.fromarray(np.uint8(parse_arm * 255), 'L'))
+
+        # mask torso & neck
+        agnostic.paste(0, None, Image.fromarray(np.uint8(parse_upper * 255), 'L'))
+        agnostic.paste(0, None, Image.fromarray(np.uint8(parse_neck * 255), 'L'))
+
+        return agnostic
     def get_agnostic(self, im, im_parse, pose_data):
         parse_array = np.array(im_parse)
         parse_head = ((parse_array == 4).astype(np.float32) +
@@ -116,11 +147,18 @@ class CPDatasetTest(data.Dataset):
         c_name = {}
         c = {}
         cm = {}
+        #print(self.c_names)
         for key in self.c_names:
             c_name[key] = self.c_names[key][index]
-            c[key] = Image.open(osp.join(self.data_path, 'cloth', c_name[key])).convert('RGB')
+            if key=="paired":
+                c[key] = Image.open(osp.join(self.data_path, 'image', c_name[key])).convert('RGB')
+            else:
+                c[key] = Image.open(osp.join(self.data_path, 'cloth', c_name[key])).convert('RGB')
             c[key] = transforms.Resize(self.fine_width, interpolation=2)(c[key])
-            cm[key] = Image.open(osp.join(self.data_path, 'cloth-mask', c_name[key]))
+            if key=="paired":
+                cm[key] = Image.open(osp.join(self.data_path, 'image-parse-v3', c_name[key]).replace('.jpg', '.png'))
+            else:
+                cm[key] = Image.open(osp.join(self.data_path, 'cloth-mask', c_name[key]))
             cm[key] = transforms.Resize(self.fine_width, interpolation=0)(cm[key])
 
             c[key] = self.transform(c[key])  # [-1,1]
@@ -139,7 +177,10 @@ class CPDatasetTest(data.Dataset):
         parse_name = im_name.replace('.jpg', '.png')
         im_parse_pil_big = Image.open(osp.join(self.data_path, 'image-parse-v3', parse_name))
         im_parse_pil = transforms.Resize(self.fine_width, interpolation=0)(im_parse_pil_big)
+
+
         parse = torch.from_numpy(np.array(im_parse_pil)[None]).long()
+
         im_parse = self.transform(im_parse_pil.convert('RGB'))
         
         labels = {
@@ -158,42 +199,42 @@ class CPDatasetTest(data.Dataset):
             12: ['noise',       [3, 11]]
         }
 
-        parse_map = torch.FloatTensor(20, self.fine_height, self.fine_width).zero_()
-        parse_map = parse_map.scatter_(0, parse, 1.0)
-        new_parse_map = torch.FloatTensor(self.semantic_nc, self.fine_height, self.fine_width).zero_()
+        #parse_map = torch.FloatTensor(20, self.fine_height, self.fine_width).zero_()
+        #parse_map = parse_map.scatter_(0, parse, 1.0)
+        #new_parse_map = torch.FloatTensor(self.semantic_nc, self.fine_height, self.fine_width).zero_()
         
-        for i in range(len(labels)):
-            for label in labels[i][1]:
-                new_parse_map[i] += parse_map[label]
-        
-        parse_onehot = torch.FloatTensor(1, self.fine_height, self.fine_width).zero_()
-        for i in range(len(labels)):
-            for label in labels[i][1]:
-                parse_onehot[0] += parse_map[label] * i
+        #for i in range(len(labels)):
+        #    for label in labels[i][1]:
+        #        new_parse_map[i] += parse_map[label]
+       # 
+       # parse_onehot = torch.FloatTensor(1, self.fine_height, self.fine_width).zero_()
+       # for i in range(len(labels)):
+       #     for label in labels[i][1]:
+       #         parse_onehot[0] += parse_map[label] * i
 
         # load image-parse-agnostic
-        image_parse_agnostic = Image.open(osp.join(self.data_path, 'image-parse-agnostic-v3.2', parse_name))
-        image_parse_agnostic = transforms.Resize(self.fine_width, interpolation=0)(image_parse_agnostic)
-        parse_agnostic = torch.from_numpy(np.array(image_parse_agnostic)[None]).long()
-        image_parse_agnostic = self.transform(image_parse_agnostic.convert('RGB'))
+        #image_parse_agnostic = Image.open(osp.join(self.data_path, 'image-parse-agnostic-v3.2', parse_name))
+        #image_parse_agnostic = transforms.Resize(self.fine_width, interpolation=0)(image_parse_agnostic)
+        #parse_agnostic = torch.from_numpy(np.array(image_parse_agnostic)[None]).long()
+        #image_parse_agnostic = self.transform(image_parse_agnostic.convert('RGB'))
 
-        parse_agnostic_map = torch.FloatTensor(20, self.fine_height, self.fine_width).zero_()
-        parse_agnostic_map = parse_agnostic_map.scatter_(0, parse_agnostic, 1.0)
-        new_parse_agnostic_map = torch.FloatTensor(self.semantic_nc, self.fine_height, self.fine_width).zero_()
-        for i in range(len(labels)):
-            for label in labels[i][1]:
-                new_parse_agnostic_map[i] += parse_agnostic_map[label]
+        #parse_agnostic_map = torch.FloatTensor(20, self.fine_height, self.fine_width).zero_()
+        #parse_agnostic_map = parse_agnostic_map.scatter_(0, parse_agnostic, 1.0)
+        #new_parse_agnostic_map = torch.FloatTensor(self.semantic_nc, self.fine_height, self.fine_width).zero_()
+        #for i in range(len(labels)):
+        #    for label in labels[i][1]:
+        #        new_parse_agnostic_map[i] += parse_agnostic_map[label]
                 
 
         # parse cloth & parse cloth mask
-        pcm = new_parse_map[3:4]
-        im_c = im * pcm + (1 - pcm)
+        #pcm = new_parse_map[3:4]
+        #im_c = im * pcm + (1 - pcm)
         
         # load pose points
-        pose_name = im_name.replace('.jpg', '_rendered.png')
-        pose_map = Image.open(osp.join(self.data_path, 'openpose_img', pose_name))
-        pose_map = transforms.Resize(self.fine_width, interpolation=2)(pose_map)
-        pose_map = self.transform(pose_map)  # [-1,1]
+        #pose_name = im_name.replace('.jpg', '_rendered.png')
+        ##pose_map = Image.open(osp.join(self.data_path, 'openpose_img', pose_name))
+        #pose_map = transforms.Resize(self.fine_width, interpolation=2)(pose_map)
+        #pose_map = self.transform(pose_map)  # [-1,1]
         
         pose_name = im_name.replace('.jpg', '_keypoints.json')
         with open(osp.join(self.data_path, 'openpose_json', pose_name), 'r') as f:
@@ -212,7 +253,21 @@ class CPDatasetTest(data.Dataset):
         agnostic = transforms.Resize(self.fine_width, interpolation=2)(agnostic)
         agnostic = self.transform(agnostic)
         
+        parse_name = im_name.replace('.jpg', '.png')
+        parse = Image.open(osp.join(self.data_path, 'image-parse-v3', parse_name))
+        parse = transforms.Resize(self.fine_width, interpolation=0)(parse)
+        parse_agnostic = self.get_parse_agnostic(parse, pose_data)
+        np.set_printoptions(threshold=np.inf, linewidth=np.inf) 
+        #print(parse,parse_name)
+        parse_agnostic = torch.from_numpy(np.array(parse_agnostic)[None]).long()
 
+        parse_agnostic_map = torch.zeros(20, self.fine_height, self.fine_width, dtype=torch.float)
+        #print(parse_agnostic.shape,parse_agnostic_map.shape)
+        parse_agnostic_map.scatter_(0, parse_agnostic, 1.0)
+        new_parse_agnostic_map = torch.zeros(self.semantic_nc, self.fine_height, self.fine_width, dtype=torch.float)
+        for i in range(len(labels)):
+            for label in labels[i][1]:
+                new_parse_agnostic_map[i] += parse_agnostic_map[label]
 
         result = {
             'c_name':   c_name,     # for visualization
@@ -223,12 +278,12 @@ class CPDatasetTest(data.Dataset):
             # intput 2 (segnet)
             'parse_agnostic': new_parse_agnostic_map,
             'densepose': densepose_map,
-            'pose': pose_map,       # for conditioning
+            #'pose': pose_map,       # for conditioning
             # GT
-            'parse_onehot' : parse_onehot,  # Cross Entropy
-            'parse': new_parse_map, # GAN Loss real
-            'pcm': pcm,             # L1 Loss & vis
-            'parse_cloth': im_c,    # VGG Loss & vis
+            #'parse_onehot' : parse_onehot,  # Cross Entropy
+            #'parse': new_parse_map, # GAN Loss real
+            #'pcm': pcm,             # L1 Loss & vis
+            #'parse_cloth': im_c,    # VGG Loss & vis
             # visualization
             'image':    im,         # for visualization
             'agnostic' : agnostic
