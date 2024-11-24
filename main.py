@@ -65,7 +65,7 @@ if __name__ == '__main__':
     agnostic_dir = "./HR-VITON/test/test/agnostic-v3.2"
     os.makedirs(agnostic_dir, exist_ok=True)
 
-    for agnostic_file in glob.glob("./HR-VITON-main/test/test/agnostic-v3.2/*.png"):
+    for agnostic_file in glob.glob("./HR-VITON/test/test/agnostic-v3.2/*.png"):
         new_path = os.path.join(agnostic_dir, os.path.basename(agnostic_file))
         os.rename(agnostic_file, new_path)
 
