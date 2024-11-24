@@ -16,9 +16,6 @@ from utils import *
 import torchgeometry as tgm
 from collections import OrderedDict
 
-import warnings
-warnings.filterwarnings("ignore")
-
 def remove_overlap(seg_out, warped_cm):
     
     assert len(warped_cm.shape) == 4
@@ -119,37 +116,36 @@ def test(opt, test_loader, tocg, generator):
         for inputs in test_loader.data_loader:
 
             if opt.cuda :
-                #pose_map = inputs['pose'].cuda()
+                pose_map = inputs['pose'].cuda()
                 pre_clothes_mask = inputs['cloth_mask'][opt.datasetting].cuda()
-                #label = inputs['parse']
+                label = inputs['parse']
                 parse_agnostic = inputs['parse_agnostic']
                 agnostic = inputs['agnostic'].cuda()
                 clothes = inputs['cloth'][opt.datasetting].cuda() # target cloth
                 densepose = inputs['densepose'].cuda()
-                #im = inputs['image']
-                #input_label=label.cuda(),
-                input_parse_agnostic = parse_agnostic.cuda()
-                pre_clothes_mask = torch.FloatTensor((pre_clothes_mask.detach().cpu().numpy() > 0.5).astype(float)).cuda()
+                im = inputs['image']
+                input_label, input_parse_agnostic = label.cuda(), parse_agnostic.cuda()
+                pre_clothes_mask = torch.FloatTensor((pre_clothes_mask.detach().cpu().numpy() > 0.5).astype(np.float)).cuda()
             else :
-                #pose_map = inputs['pose']
+                pose_map = inputs['pose']
                 pre_clothes_mask = inputs['cloth_mask'][opt.datasetting]
                 label = inputs['parse']
                 parse_agnostic = inputs['parse_agnostic']
                 agnostic = inputs['agnostic']
                 clothes = inputs['cloth'][opt.datasetting] # target cloth
                 densepose = inputs['densepose']
-                #im = inputs['image']
+                im = inputs['image']
                 input_label, input_parse_agnostic = label, parse_agnostic
-                pre_clothes_mask = torch.FloatTensor((pre_clothes_mask.detach().cpu().numpy() > 0.5).astype(float))
+                pre_clothes_mask = torch.FloatTensor((pre_clothes_mask.detach().cpu().numpy() > 0.5).astype(np.float))
 
 
 
             # down
-            #pose_map_down = F.interpolate(pose_map, size=(256, 192), mode='bilinear')
+            pose_map_down = F.interpolate(pose_map, size=(256, 192), mode='bilinear')
             pre_clothes_mask_down = F.interpolate(pre_clothes_mask, size=(256, 192), mode='nearest')
-            #input_label_down = F.interpolate(input_label, size=(256, 192), mode='bilinear')
+            input_label_down = F.interpolate(input_label, size=(256, 192), mode='bilinear')
             input_parse_agnostic_down = F.interpolate(input_parse_agnostic, size=(256, 192), mode='nearest')
-            #agnostic_down = F.interpolate(agnostic, size=(256, 192), mode='nearest')
+            agnostic_down = F.interpolate(agnostic, size=(256, 192), mode='nearest')
             clothes_down = F.interpolate(clothes, size=(256, 192), mode='bilinear')
             densepose_down = F.interpolate(densepose, size=(256, 192), mode='bilinear')
 
@@ -164,9 +160,9 @@ def test(opt, test_loader, tocg, generator):
             
             # warped cloth mask one hot
             if opt.cuda :
-                warped_cm_onehot = torch.FloatTensor((warped_clothmask_paired.detach().cpu().numpy() > 0.5).astype(float)).cuda()
+                warped_cm_onehot = torch.FloatTensor((warped_clothmask_paired.detach().cpu().numpy() > 0.5).astype(np.float)).cuda()
             else :
-                warped_cm_onehot = torch.FloatTensor((warped_clothmask_paired.detach().cpu().numpy() > 0.5).astype(float))
+                warped_cm_onehot = torch.FloatTensor((warped_clothmask_paired.detach().cpu().numpy() > 0.5).astype(np.float))
 
             if opt.clothmask_composition != 'no_composition':
                 if opt.clothmask_composition == 'detach':
@@ -224,13 +220,13 @@ def test(opt, test_loader, tocg, generator):
             # visualize
             unpaired_names = []
             for i in range(shape[0]):
-                '''grid = make_image_grid([(clothes[i].cpu() / 2 + 0.5), (pre_clothes_mask[i].cpu()).expand(3, -1, -1), visualize_segmap(parse_agnostic.cpu(), batch=i), ((densepose.cpu()[i]+1)/2),
+                grid = make_image_grid([(clothes[i].cpu() / 2 + 0.5), (pre_clothes_mask[i].cpu()).expand(3, -1, -1), visualize_segmap(parse_agnostic.cpu(), batch=i), ((densepose.cpu()[i]+1)/2),
                                         (warped_cloth[i].cpu().detach() / 2 + 0.5), (warped_clothmask[i].cpu().detach()).expand(3, -1, -1), visualize_segmap(fake_parse_gauss.cpu(), batch=i),
                                         (pose_map[i].cpu()/2 +0.5), (warped_cloth[i].cpu()/2 + 0.5), (agnostic[i].cpu()/2 + 0.5),
                                         (im[i]/2 +0.5), (output[i].cpu()/2 +0.5)],
-                                        nrow=4)'''
+                                        nrow=4)
                 unpaired_name = (inputs['c_name']['paired'][i].split('.')[0] + '_' + inputs['c_name'][opt.datasetting][i].split('.')[0] + '.png')
-                #save_image(grid, os.path.join(grid_dir, unpaired_name))
+                save_image(grid, os.path.join(grid_dir, unpaired_name))
                 unpaired_names.append(unpaired_name)
                 
             # save output
@@ -244,8 +240,8 @@ def test(opt, test_loader, tocg, generator):
 
 def main():
     opt = get_opt()
-    #print(opt)
-    print("Start to test! - HR-VITON")
+    print(opt)
+    print("Start to test %s!")
     os.environ["CUDA_VISIBLE_DEVICES"] = opt.gpu_ids
     
     # create test dataset & loader

@@ -195,10 +195,10 @@ class CPDataset(data.Dataset):
         im_c = im * pcm + (1 - pcm)
 
         # load pose points
-        #pose_name = im_name.replace('image', 'openpose_img').replace('.jpg', '_rendered.png')
-        #pose_map = Image.open(osp.join(self.data_path, pose_name))
-        #pose_map = transforms.Resize(self.fine_width, interpolation=2)(pose_map)
-        #pose_map = self.transform(pose_map)  # [-1,1]
+        pose_name = im_name.replace('image', 'openpose_img').replace('.jpg', '_rendered.png')
+        pose_map = Image.open(osp.join(self.data_path, pose_name))
+        pose_map = transforms.Resize(self.fine_width, interpolation=2)(pose_map)
+        pose_map = self.transform(pose_map)  # [-1,1]
         
         # pose name
         pose_name = im_name.replace('image', 'openpose_json').replace('.jpg', '_keypoints.json')
@@ -229,7 +229,7 @@ class CPDataset(data.Dataset):
             # intput 2 (segnet)
             'parse_agnostic': new_parse_agnostic_map,
             'densepose': densepose_map,
-            #'pose': pose_map,       # for conditioning
+            'pose': pose_map,       # for conditioning
             # generator input
             'agnostic' : agnostic,
             # GT
@@ -361,10 +361,10 @@ class CPDatasetTest(data.Dataset):
         im_c = im * pcm + (1 - pcm)
         
         # load pose points
-        #pose_name = im_name.replace('.jpg', '_rendered.png')
-        #pose_map = Image.open(osp.join(self.data_path, 'openpose_img', pose_name))
-        #pose_map = transforms.Resize(self.fine_width, interpolation=2)(pose_map)
-        #pose_map = self.transform(pose_map)  # [-1,1]
+        pose_name = im_name.replace('.jpg', '_rendered.png')
+        pose_map = Image.open(osp.join(self.data_path, 'openpose_img', pose_name))
+        pose_map = transforms.Resize(self.fine_width, interpolation=2)(pose_map)
+        pose_map = self.transform(pose_map)  # [-1,1]
         
         
         # load densepose
@@ -385,7 +385,7 @@ class CPDatasetTest(data.Dataset):
             # intput 2 (segnet)
             'parse_agnostic': new_parse_agnostic_map,
             'densepose': densepose_map,
-            #'pose': pose_map,       # for conditioning
+            'pose': pose_map,       # for conditioning
             # GT
             'parse_onehot' : parse_onehot,  # Cross Entropy
             'parse': new_parse_map, # GAN Loss real

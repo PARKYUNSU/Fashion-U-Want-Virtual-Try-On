@@ -1,6 +1,8 @@
 # HR-VITON &mdash; Official PyTorch Implementation
 <!-- This repository contains a PyTorch implementation for our paper "High-Resolution Virtual Try-On with Misalignment and Occlusion-Handled Conditions". -->
 
+<br>**\*\*\*\*\* New follow-up research by our team is available at https://github.com/rlawjdghek/StableVITON \*\*\*\*\***<br><br>
+
 ![Teaser image](./figures/fig.jpg)
 
 > **High-Resolution Virtual Try-On with Misalignment and Occlusion-Handled Conditions**<br>
@@ -43,8 +45,8 @@ We assume that you have downloaded it into `./data`.
 Here are the download links for each model checkpoint:
 
 - Try-on condition generator: [link](https://drive.google.com/file/d/1XJTCdRBOPVgVTmqzhVGFAgMm2NLkw5uQ/view?usp=sharing)
-- Try-on condition generator (discriminator): [link](https://drive.google.com/file/d/1Gi185XUAI3w4srReTbp3eIzkjFC51ym-/view?usp=sharing)
-- Try-on image generator: [link](https://drive.google.com/file/d/1BkSA8UJo-6eOkKcXTFOHK80Esc4vBmVC/view?usp=sharing)
+- Try-on condition generator (discriminator): [link](https://drive.google.com/file/d/1T4V3cyRlY5sHVK7Quh_EJY5dovb5FxGX/view?usp=share_link)
+- Try-on image generator: [link](https://drive.google.com/file/d/1T5_YDUhYSSKPC_nZMk2NeC-XXUFoYeNy/view?usp=share_link)
 - AlexNet (LPIPS): [link](https://drive.google.com/file/d/1FF3BBSDIA3uavmAiuMH6YFCv09Lt8jUr/view?usp=sharing), we assume that you have downloaded it into `./eval_models/weights/v0.1`.
 
 ```python
