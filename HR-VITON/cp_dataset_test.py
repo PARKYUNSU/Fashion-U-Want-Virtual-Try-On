@@ -1,20 +1,21 @@
+#coding=utf-8
 import torch
 import torch.utils.data as data
 import torchvision.transforms as transforms
 
 from PIL import Image, ImageDraw
+import json
 
 import os.path as osp
 import numpy as np
-import json
 
 
-class CPDatasetTest(data.Dataset):
+class CPDataset(data.Dataset):
     """
-        Test Dataset for CP-VTON.
+        Dataset for CP-VTON.
     """
     def __init__(self, opt):
-        super(CPDatasetTest, self).__init__()
+        super(CPDataset, self).__init__()
         # base setting
         self.opt = opt
         self.root = opt.dataroot
@@ -44,6 +45,7 @@ class CPDatasetTest(data.Dataset):
 
     def name(self):
         return "CPDataset"
+    
     def get_agnostic(self, im, im_parse, pose_data):
         parse_array = np.array(im_parse)
         parse_head = ((parse_array == 4).astype(np.float32) +
@@ -92,6 +94,7 @@ class CPDatasetTest(data.Dataset):
             agnostic_draw.ellipse((pointx-r*5, pointy-r*5, pointx+r*5, pointy+r*5), 'gray', 'gray')
 
         for parse_id, pose_ids in [(14, [5, 6, 7]), (15, [2, 3, 4])]:
+            # mask_arm = Image.new('L', (self.fine_width, self.fine_height), 'white')
             mask_arm = Image.new('L', (768, 1024), 'white')
             mask_arm_draw = ImageDraw.Draw(mask_arm)
             pointx, pointy = pose_data[pose_ids[0]]
@@ -111,6 +114,175 @@ class CPDatasetTest(data.Dataset):
         agnostic.paste(im, None, Image.fromarray(np.uint8(parse_head * 255), 'L'))
         agnostic.paste(im, None, Image.fromarray(np.uint8(parse_lower * 255), 'L'))
         return agnostic
+
+    def __getitem__(self, index):
+        im_name = self.im_names[index]
+        im_name = 'image/' + im_name
+        c_name = {}
+        c = {}
+        cm = {}
+        for key in ['paired']:
+            c_name[key] = self.c_names[key][index]
+            c[key] = Image.open(osp.join(self.data_path, 'cloth', c_name[key])).convert('RGB')
+            c[key] = transforms.Resize(self.fine_width, interpolation=2)(c[key])
+            cm[key] = Image.open(osp.join(self.data_path, 'cloth-mask', c_name[key]))
+            cm[key] = transforms.Resize(self.fine_width, interpolation=0)(cm[key])
+
+            c[key] = self.transform(c[key])  # [-1,1]
+            cm_array = np.array(cm[key])
+            cm_array = (cm_array >= 128).astype(np.float32)
+            cm[key] = torch.from_numpy(cm_array)  # [0,1]
+            cm[key].unsqueeze_(0)
+
+        # person image
+        im_pil_big = Image.open(osp.join(self.data_path, im_name))
+        im_pil = transforms.Resize(self.fine_width, interpolation=2)(im_pil_big)
+        im = self.transform(im_pil)
+
+        # load parsing image
+        parse_name = im_name.replace('image', 'image-parse-v3').replace('.jpg', '.png')
+        im_parse_pil_big = Image.open(osp.join(self.data_path, parse_name))
+        im_parse_pil = transforms.Resize(self.fine_width, interpolation=0)(im_parse_pil_big)
+        parse = torch.from_numpy(np.array(im_parse_pil)[None]).long()
+        im_parse = self.transform(im_parse_pil.convert('RGB'))
+
+        # parse map
+        labels = {
+            0:  ['background',  [0, 10]],
+            1:  ['hair',        [1, 2]],
+            2:  ['face',        [4, 13]],
+            3:  ['upper',       [5, 6, 7]],
+            4:  ['bottom',      [9, 12]],
+            5:  ['left_arm',    [14]],
+            6:  ['right_arm',   [15]],
+            7:  ['left_leg',    [16]],
+            8:  ['right_leg',   [17]],
+            9:  ['left_shoe',   [18]],
+            10: ['right_shoe',  [19]],
+            11: ['socks',       [8]],
+            12: ['noise',       [3, 11]]
+        }
+        
+        parse_map = torch.FloatTensor(20, self.fine_height, self.fine_width).zero_()
+        parse_map = parse_map.scatter_(0, parse, 1.0)
+        new_parse_map = torch.FloatTensor(self.semantic_nc, self.fine_height, self.fine_width).zero_()
+
+        for i in range(len(labels)):
+            for label in labels[i][1]:
+                new_parse_map[i] += parse_map[label]
+                
+        parse_onehot = torch.FloatTensor(1, self.fine_height, self.fine_width).zero_()
+        for i in range(len(labels)):
+            for label in labels[i][1]:
+                parse_onehot[0] += parse_map[label] * i
+                
+        # load image-parse-agnostic
+        image_parse_agnostic = Image.open(osp.join(self.data_path, parse_name.replace('image-parse-v3', 'image-parse-agnostic-v3.2')))
+        image_parse_agnostic = transforms.Resize(self.fine_width, interpolation=0)(image_parse_agnostic)
+        parse_agnostic = torch.from_numpy(np.array(image_parse_agnostic)[None]).long()
+        image_parse_agnostic = self.transform(image_parse_agnostic.convert('RGB'))
+
+        parse_agnostic_map = torch.FloatTensor(20, self.fine_height, self.fine_width).zero_()
+        parse_agnostic_map = parse_agnostic_map.scatter_(0, parse_agnostic, 1.0)
+        new_parse_agnostic_map = torch.FloatTensor(self.semantic_nc, self.fine_height, self.fine_width).zero_()
+        for i in range(len(labels)):
+            for label in labels[i][1]:
+                new_parse_agnostic_map[i] += parse_agnostic_map[label]        
+                
+                     
+        # parse cloth & parse cloth mask
+        pcm = new_parse_map[3:4]
+        im_c = im * pcm + (1 - pcm)
+
+        # load pose points
+        #pose_name = im_name.replace('image', 'openpose_img').replace('.jpg', '_rendered.png')
+        #pose_map = Image.open(osp.join(self.data_path, pose_name))
+        #pose_map = transforms.Resize(self.fine_width, interpolation=2)(pose_map)
+        #pose_map = self.transform(pose_map)  # [-1,1]
+        
+        # pose name
+        pose_name = im_name.replace('image', 'openpose_json').replace('.jpg', '_keypoints.json')
+        with open(osp.join(self.data_path, pose_name), 'r') as f:
+            pose_label = json.load(f)
+            pose_data = pose_label['people'][0]['pose_keypoints_2d']
+            pose_data = np.array(pose_data)
+            pose_data = pose_data.reshape((-1, 3))[:, :2]
+        
+        # load densepose
+        densepose_name = im_name.replace('image', 'image-densepose')
+        densepose_map = Image.open(osp.join(self.data_path, densepose_name))
+        densepose_map = transforms.Resize(self.fine_width, interpolation=2)(densepose_map)
+        densepose_map = self.transform(densepose_map)  # [-1,1]
+
+        # agnostic
+        agnostic = self.get_agnostic(im_pil_big, im_parse_pil_big, pose_data)
+        agnostic = transforms.Resize(self.fine_width, interpolation=2)(agnostic)
+        agnostic = self.transform(agnostic)
+
+
+        result = {
+            'c_name':   c_name,     # for visualization
+            'im_name':  im_name,    # for visualization or ground truth
+            # intput 1 (clothfloww)
+            'cloth':    c,          # for input
+            'cloth_mask':     cm,   # for input
+            # intput 2 (segnet)
+            'parse_agnostic': new_parse_agnostic_map,
+            'densepose': densepose_map,
+            #'pose': pose_map,       # for conditioning
+            # generator input
+            'agnostic' : agnostic,
+            # GT
+            'parse_onehot' : parse_onehot,  # Cross Entropy
+            'parse': new_parse_map, # GAN Loss real
+            'pcm': pcm,             # L1 Loss & vis
+            'parse_cloth': im_c,    # VGG Loss & vis
+            # visualization & GT
+            'image':    im,         # for visualization
+            }
+
+        return result
+
+    def __len__(self):
+        return len(self.im_names)
+    
+
+class CPDatasetTest(data.Dataset):
+    """
+        Test Dataset for CP-VTON.
+    """
+    def __init__(self, opt):
+        super(CPDatasetTest, self).__init__()
+        # base setting
+        self.opt = opt
+        self.root = opt.dataroot
+        self.datamode = opt.datamode # train or test or self-defined
+        self.data_list = opt.data_list
+        self.fine_height = opt.fine_height
+        self.fine_width = opt.fine_width
+        self.semantic_nc = opt.semantic_nc
+        self.data_path = osp.join(opt.dataroot, opt.datamode)
+        self.transform = transforms.Compose([  \
+                transforms.ToTensor(),   \
+                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
+        # load data list
+        im_names = []
+        c_names = []
+        with open(osp.join(opt.dataroot, opt.data_list), 'r') as f:
+            for line in f.readlines():
+                im_name, c_name = line.strip().split()
+                im_names.append(im_name)
+                c_names.append(c_name)
+
+        self.im_names = im_names
+        self.c_names = dict()
+        self.c_names['paired'] = im_names
+        self.c_names['unpaired'] = c_names
+
+    def name(self):
+        return "CPDataset"
+
     def __getitem__(self, index):
         im_name = self.im_names[index]
         c_name = {}
@@ -130,17 +302,16 @@ class CPDatasetTest(data.Dataset):
             cm[key].unsqueeze_(0)
 
         # person image
-        im_pil_big = Image.open(osp.join(self.data_path, 'image', im_name))
-        im_pil = transforms.Resize(self.fine_width, interpolation=2)(im_pil_big)
-        
-        im = self.transform(im_pil)
+        im = Image.open(osp.join(self.data_path, 'image', im_name))
+        im = transforms.Resize(self.fine_width, interpolation=2)(im)
+        im = self.transform(im)
 
         # load parsing image
         parse_name = im_name.replace('.jpg', '.png')
-        im_parse_pil_big = Image.open(osp.join(self.data_path, 'image-parse-v3', parse_name))
-        im_parse_pil = transforms.Resize(self.fine_width, interpolation=0)(im_parse_pil_big)
-        parse = torch.from_numpy(np.array(im_parse_pil)[None]).long()
-        im_parse = self.transform(im_parse_pil.convert('RGB'))
+        im_parse = Image.open(osp.join(self.data_path, 'image-parse-v3', parse_name))
+        im_parse = transforms.Resize(self.fine_width, interpolation=0)(im_parse)
+        parse = torch.from_numpy(np.array(im_parse)[None]).long()
+        im_parse = self.transform(im_parse.convert('RGB'))
         
         labels = {
             0:  ['background',  [0, 10]],
@@ -190,28 +361,19 @@ class CPDatasetTest(data.Dataset):
         im_c = im * pcm + (1 - pcm)
         
         # load pose points
-        pose_name = im_name.replace('.jpg', '_rendered.png')
-        pose_map = Image.open(osp.join(self.data_path, 'openpose_img', pose_name))
-        pose_map = transforms.Resize(self.fine_width, interpolation=2)(pose_map)
-        pose_map = self.transform(pose_map)  # [-1,1]
+        #pose_name = im_name.replace('.jpg', '_rendered.png')
+        #pose_map = Image.open(osp.join(self.data_path, 'openpose_img', pose_name))
+        #pose_map = transforms.Resize(self.fine_width, interpolation=2)(pose_map)
+        #pose_map = self.transform(pose_map)  # [-1,1]
         
-        pose_name = im_name.replace('.jpg', '_keypoints.json')
-        with open(osp.join(self.data_path, 'openpose_json', pose_name), 'r') as f:
-            pose_label = json.load(f)
-            pose_data = pose_label['people'][0]['pose_keypoints_2d']
-            pose_data = np.array(pose_data)
-            pose_data = pose_data.reshape((-1, 3))[:, :2]
-
         
         # load densepose
         densepose_name = im_name.replace('image', 'image-densepose')
         densepose_map = Image.open(osp.join(self.data_path, 'image-densepose', densepose_name))
         densepose_map = transforms.Resize(self.fine_width, interpolation=2)(densepose_map)
         densepose_map = self.transform(densepose_map)  # [-1,1]
-        agnostic = self.get_agnostic(im_pil_big, im_parse_pil_big, pose_data)
-        agnostic = transforms.Resize(self.fine_width, interpolation=2)(agnostic)
-        agnostic = self.transform(agnostic)
-        
+
+
 
 
         result = {
@@ -223,7 +385,7 @@ class CPDatasetTest(data.Dataset):
             # intput 2 (segnet)
             'parse_agnostic': new_parse_agnostic_map,
             'densepose': densepose_map,
-            'pose': pose_map,       # for conditioning
+            #'pose': pose_map,       # for conditioning
             # GT
             'parse_onehot' : parse_onehot,  # Cross Entropy
             'parse': new_parse_map, # GAN Loss real
@@ -231,7 +393,6 @@ class CPDatasetTest(data.Dataset):
             'parse_cloth': im_c,    # VGG Loss & vis
             # visualization
             'image':    im,         # for visualization
-            'agnostic' : agnostic
             }
         
         return result
@@ -243,6 +404,7 @@ class CPDatasetTest(data.Dataset):
 class CPDataLoader(object):
     def __init__(self, opt, dataset):
         super(CPDataLoader, self).__init__()
+
         if opt.shuffle :
             train_sampler = torch.utils.data.sampler.RandomSampler(dataset)
         else:
