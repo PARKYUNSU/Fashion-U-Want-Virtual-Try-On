@@ -55,7 +55,7 @@ bg[y:y + h, x:x + w, :] = seg_img
 bg_img = Image.fromarray(bg, "RGB")
 
 # Ensure the output directory exists
-output_dir = "./HR-VITON-main/test/test/image-densepose/"
+output_dir = "./HR-VITON/test/test/image-densepose/"
 os.makedirs(output_dir, exist_ok=True)
 
 # Save the output image

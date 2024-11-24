@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
     # 입력 및 출력 경로 설정
     input_path = './input/model.jpg'  # 단일 이미지 파일 경로
-    output_json_path = './HR-VITON-main/test/test/openpose_json'  # JSON 저장 경로
+    output_json_path = './HR-VITON/test/test/openpose_json'  # JSON 저장 경로
 
     # Ensure output directory exists
     os.makedirs(output_json_path, exist_ok=True)

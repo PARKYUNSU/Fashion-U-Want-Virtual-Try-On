@@ -7,8 +7,8 @@ import cv2
 
 
 def process_images(input_path="./input/cloth.jpg", 
-                   cloth_output_path="./HR-VITON-main/test/test/cloth",
-                   mask_output_path="./HR-VITON-main/test/test/cloth-mask",
+                   cloth_output_path="./HR-VITON/test/test/cloth",
+                   mask_output_path="./HR-VITON/test/test/cloth-mask",
                    segmentation_network="u2net", 
                    preprocessing_method="none", 
                    postprocessing_method="none", 
@@ -79,6 +79,6 @@ def process_images(input_path="./input/cloth.jpg",
 
 if __name__ == "__main__":
     input_path = "./input/cloth.jpg"  # Path to input image
-    cloth_output_path = "./HR-VITON-main/test/test/cloth"  # Path to save processed images
-    mask_output_path = "./HR-VITON-main/test/test/cloth-mask"  # Path to save masks
+    cloth_output_path = "./HR-VITON/test/test/cloth"  # Path to save processed images
+    mask_output_path = "./HR-VITON/test/test/cloth-mask"  # Path to save masks
     process_images(input_path, cloth_output_path, mask_output_path)

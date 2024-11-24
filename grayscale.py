@@ -50,7 +50,7 @@ img = cv2.resize(gray_img, (768, 1024), interpolation=cv2.INTER_NEAREST)
 bg_img = Image.fromarray(np.uint8(img), "L")
 
 # Ensure the output directory exists
-output_dir = "./HR-VITON-main/test/test/image-parse-v3/"
+output_dir = "./HR-VITON/test/test/image-parse-v3/"
 os.makedirs(output_dir, exist_ok=True)
 
 # Save the image to the specified path
