@@ -57,8 +57,8 @@ def get_img_agnostic(img, parse, pose_data):
     return agnostic
 
 if __name__ =="__main__":
-    data_path = './test'
-    output_path = './test/parse'
+    data_path = './HR-VITON-main/test/test'
+    output_path = './HR-VITON-main/test/test/agnostic-v3.2'
     
     os.makedirs(output_path, exist_ok=True)
     

@@ -56,6 +56,19 @@ if __name__ == '__main__':
     terminnal_command ="python grayscale.py"
     os.system(terminnal_command)
 
+    # Step 4: Generate agnostic data using get_agnostic.py
+    print("Generate agnostic data\n")
+    terminnal_command = "python get_agnostic.py"
+    os.system(terminnal_command)
+
+    # Ensure agnostic data is in the correct directory
+    agnostic_dir = "./HR-VITON/test/test/agnostic-v3.2"
+    os.makedirs(agnostic_dir, exist_ok=True)
+
+    for agnostic_file in glob.glob("./HR-VITON-main/test/test/agnostic-v3.2/*.png"):
+        new_path = os.path.join(agnostic_dir, os.path.basename(agnostic_file))
+        os.rename(agnostic_file, new_path)
+
     # Generate Densepose image using detectron2 library
     print("\nGenerate Densepose image using detectron2 library\n")
     terminnal_command ="python detectron2/projects/DensePose/apply_net.py dump detectron2/projects/DensePose/configs/densepose_rcnn_R_50_FPN_s1x.yaml \
