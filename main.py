@@ -36,7 +36,7 @@ if __name__ == '__main__':
 
     # Get openpose coordinate using posenet
     print("Get openpose coordinate using posenet\n")
-    terminnal_command = "python openpose.py" 
+    terminnal_command = "python openpose2.py" 
     os.system(terminnal_command)
 
     # Generate semantic segmentation using Graphonomy-Master library

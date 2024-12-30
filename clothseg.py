@@ -13,8 +13,8 @@ def process_images(input_path="./input/cloth.jpg",
                    preprocessing_method="none", 
                    postprocessing_method="none", 
                    seg_mask_size=320, 
-                   trimap_dilation=30, 
-                   trimap_erosion=5, 
+                   trimap_dilation=50, 
+                   trimap_erosion=10, 
                    device='cuda'):
     
     # Initialize the configuration
