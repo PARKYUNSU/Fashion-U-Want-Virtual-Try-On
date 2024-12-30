@@ -73,6 +73,16 @@ if __name__ == '__main__':
     terminnal_command ="python get_densepose.py"
     os.system(terminnal_command)
 
+    # parse agnositc
+    print("\nGenerate Parsing agnoistic")
+    terminnal_command = "python get_parse_agnostic.py --data_path HR-VITON/test/test --output_path HR-VITON/test/test/image-parse-agnostic-v3.2"
+    os.system(terminnal_command)
+
+    # Human agnostic
+    print("\nGenerate Human Parsing agnoistic")
+    terminnal_command = "python get_agnostic.py --data_path HR-VITON/test/test --output_path HR-VITON/test/test/agnostic-v3.2"
+    os.system(terminnal_command)
+
     # Run HR-VITON to generate final image
     print("\nRun HR-VITON to generate final image\n")
     os.chdir("./HR-VITON")
