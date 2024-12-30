@@ -12,7 +12,7 @@ def load_model():
     # Detectron2 모델 구성 및 로드
     cfg = get_cfg()
     cfg.merge_from_file("detectron2/configs/COCO-Keypoints/keypoint_rcnn_X_101_32x8d_FPN_3x.yaml")
-    cfg.MODEL.WEIGHTS = "/content/model/model_final_5ad38f.pkl"
+    cfg.MODEL.WEIGHTS = "/content/Fashion-U-Want-Virtual-Try-On/model/model_final_5ad38f.pkl"
     cfg.MODEL.DEVICE = "cuda"  # GPU 사용
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # 객체 탐지 임계값 설정
     predictor = DefaultPredictor(cfg)
