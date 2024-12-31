@@ -104,7 +104,7 @@ if __name__ == "__main__":
 
     # 입력 및 출력 경로 설정
     input_path = './input/image.jpg'  # 입력 이미지 경로
-    output_json_path = './output/json'  # 출력 JSON 및 시각화 경로
+    output_json_path = './HR-VITON/test/test/openpose_json'  # 출력 JSON 및 시각화 경로
 
     # 디렉토리 생성
     os.makedirs(output_json_path, exist_ok=True)
