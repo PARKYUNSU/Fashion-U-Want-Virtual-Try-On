@@ -87,7 +87,7 @@ def inference_and_save(image_path, predictor, output_json_path):
         json_data["people"].append(person_data)
 
     os.makedirs(output_json_path, exist_ok=True)
-    json_file_path = os.path.join(output_json_path, "keypoints.json")
+    json_file_path = os.path.join(output_json_path, "00001_00_keypoints.json")
     with open(json_file_path, "w") as json_file:
         json.dump(json_data, json_file, indent=4)
     print(f"JSON saved at {json_file_path}")
