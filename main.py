@@ -80,7 +80,7 @@ if __name__ == '__main__':
 
     # Human agnostic
     print("\nGenerate Human Parsing agnoistic")
-    terminnal_command = "python get_agnostic.py --data_path HR-VITON/test/test --output_path HR-VITON/test/test/agnostic-v3.2"
+    terminnal_command = "python get_agnostic2.py --data_path HR-VITON/test/test --output_path HR-VITON/test/test/agnostic-v3.2"
     os.system(terminnal_command)
 
     # Run HR-VITON to generate final image
