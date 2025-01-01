@@ -42,8 +42,10 @@ if __name__ == '__main__':
     import os
     import shutil
 
-    input_path = './input/model.jpg'  # 단일 이미지 파일 경로
-    output_json_path = './HR-VITON/test/test/openpose_json'  # JSON 저장 경로
+    # OpenPose 요구사항에 맞춘 경로 설정
+    input_dir = "/content/Fashion-U-Want-Virtual-Try-On/input"  # 이미지 디렉토리 경로
+    input_image = "model.jpg"  # 디렉토리 내 이미지 파일 이름
+    output_json_path = "/content/Fashion-U-Want-Virtual-Try-On/HR-VITON/test/test/openpose_json"  # JSON 저장 경로
     json_filename = "00001_00_keypoints.json"  # 원하는 JSON 파일 이름
 
     # 출력 디렉토리 생성
@@ -52,15 +54,14 @@ if __name__ == '__main__':
     # OpenPose 실행
     print("Get OpenPose coordinates\n")
     os.system(f"cd /content/openpose && ./build/examples/openpose/openpose.bin "
-            f"--image_dir {os.path.dirname(input_path)} "
+            f"--image_dir {input_dir} "
             f"--write_json {output_json_path} "
             f"--model_folder ./models/ "
-            f"--display 0")
+            f"--render_pose 0 "  # 렌더링 비활성화
+            f"--display 0")  # GUI 비활성화
 
     # 생성된 JSON 파일 이름 변경
-    # OpenPose는 입력 이미지 이름을 기준으로 JSON 파일을 생성하므로 이를 찾아 변경
-    input_image_name = os.path.basename(input_path)
-    generated_json = os.path.join(output_json_path, f"{os.path.splitext(input_image_name)[0]}_keypoints.json")
+    generated_json = os.path.join(output_json_path, f"{os.path.splitext(input_image)[0]}_keypoints.json")
     target_json = os.path.join(output_json_path, json_filename)
 
     if os.path.exists(generated_json):
@@ -68,10 +69,11 @@ if __name__ == '__main__':
         print(f"JSON file renamed to {target_json}")
     else:
         print(f"Error: Expected JSON file {generated_json} not found.")
+    os.chdir("../")
 
     # Generate semantic segmentation using Graphonomy-Master library
     print("Generate semantic segmentation using Graphonomy-Master library\n")
-    os.chdir("./Graphonomy-master")
+    os.chdir("content/Fashion-U-Want-Virtual-Try-On/Graphonomy-master")
     terminnal_command ="python exp/inference/inference.py --loadmodel ./inference.pth --img_path ../resized_img.jpg --output_path ../ --output_name /resized_segmentation_img"
     os.system(terminnal_command)
     os.chdir("../")
