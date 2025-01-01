@@ -73,7 +73,7 @@ if __name__ == '__main__':
 
     # Generate semantic segmentation using Graphonomy-Master library
     print("Generate semantic segmentation using Graphonomy-Master library\n")
-    os.chdir("content/Fashion-U-Want-Virtual-Try-On/Graphonomy-master")
+    os.chdir("/content/Fashion-U-Want-Virtual-Try-On/Graphonomy-master")
     terminnal_command ="python exp/inference/inference.py --loadmodel ./inference.pth --img_path ../resized_img.jpg --output_path ../ --output_name /resized_segmentation_img"
     os.system(terminnal_command)
     os.chdir("../")
