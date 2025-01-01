@@ -1,5 +1,5 @@
 import os
-import subprocess
+import shutil
 import warnings
 import numpy as np
 import cv2
@@ -34,33 +34,20 @@ if __name__ == '__main__':
     terminnal_command = "python clothseg.py" 
     os.system(terminnal_command)
 
-    # # Get openpose coordinate using posenet
-    # print("Get openpose coordinate using posenet\n")
-    # terminnal_command = "python openpose2.py"
-    # os.system(terminnal_command)
-
-    import os
-    import shutil
-
-    # OpenPose 요구사항에 맞춘 경로 설정
-    input_dir = "/content/Fashion-U-Want-Virtual-Try-On/input"  # 이미지 디렉토리 경로
-    input_image = "model.jpg"  # 디렉토리 내 이미지 파일 이름
-    output_json_path = "/content/Fashion-U-Want-Virtual-Try-On/HR-VITON/test/test/openpose_json"  # JSON 저장 경로
-    json_filename = "00001_00_keypoints.json"  # 원하는 JSON 파일 이름
-
-    # 출력 디렉토리 생성
+    # Generate keypoints json using Openpose model
+    input_dir = "/content/Fashion-U-Want-Virtual-Try-On/input"
+    input_image = "model.jpg"
+    output_json_path = "/content/Fashion-U-Want-Virtual-Try-On/HR-VITON/test/test/openpose_json"
+    json_filename = "00001_00_keypoints.json"
     os.makedirs(output_json_path, exist_ok=True)
 
-    # OpenPose 실행
     print("Get OpenPose coordinates\n")
     os.system(f"cd /content/Fashion-U-Want-Virtual-Try-On/openpose && ./build/examples/openpose/openpose.bin "
             f"--image_dir {input_dir} "
             f"--write_json {output_json_path} "
             f"--model_folder ./models/ "
-            f"--render_pose 0 "  # 렌더링 비활성화
-            f"--display 0")  # GUI 비활성화
-
-    # 생성된 JSON 파일 이름 변경
+            f"--render_pose 0 "
+            f"--display 0")
     generated_json = os.path.join(output_json_path, f"{os.path.splitext(input_image)[0]}_keypoints.json")
     target_json = os.path.join(output_json_path, json_filename)
 
