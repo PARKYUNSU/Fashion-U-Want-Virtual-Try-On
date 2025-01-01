@@ -1,6 +1,6 @@
 # Fashion-U-Want: High Resolution Virtual Try-On
 
-Fashion-U-Want is a high-resolution virtual try-on system that leverages deep learning to overlay clothing onto a person's image. This framework processes input images through ``Try_TRYON.ipynb``, extracting clothing masks, pose information, and segmentation data to generate realistic try-on results—all without requiring manual installation of dependencies.
+Fashion-U-Want is a high-resolution virtual try-on system that uses deep learning to overlay clothing onto a person's image. This framework processes input images through ``Try_TRYON.ipynb``, extracting clothing masks, pose information, and segmentation data to generate realistic try-on results—all without requiring manual installation of dependencies.
 ## How to Use
 
 1. Click the "Open in Colab" button below.
