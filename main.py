@@ -14,15 +14,15 @@ if __name__ == '__main__':
     opt = parser.parse_args()
 
     img=cv2.imread("./input/model.jpg")
-    # (768, 1024) 크기로 맞추기
-    if img.shape[:2] != (1024, 768):  # 높이와 너비 비교
-        model_img = cv2.resize(img, (768, 1024))  # OpenCV는 (width, height) 순서로 받음
+    # (768, 1024) resize
+    if img.shape[:2] != (1024, 768):
+        model_img = cv2.resize(img, (768, 1024))
         print("Resized to (768, 1024)")
     else:
         model_img = img
         print("Already (768, 1024)")
 
-    # 저장
+    # save
     cv2.imwrite("./model.jpg", model_img)
 
     img=cv2.imread("model.jpg")
@@ -34,11 +34,10 @@ if __name__ == '__main__':
     terminnal_command = "python clothseg.py" 
     os.system(terminnal_command)
 
-    # # Get openpose coordinate using posenet
-    # print("Get openpose coordinate using posenet\n")
-    # # terminnal_command = "python openpose2.py" 
-    # terminnal_command = "python demo.py"
-    # os.system(terminnal_command)
+    # Get openpose coordinate using posenet
+    print("Get openpose coordinate using posenet\n")
+    terminnal_command = "python openpose2.py"
+    os.system(terminnal_command)
 
 
     # Generate semantic segmentation using Graphonomy-Master library
