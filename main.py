@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     # OpenPose 실행
     print("Get OpenPose coordinates\n")
-    os.system(f"cd /content/openpose && ./build/examples/openpose/openpose.bin "
+    os.system(f"cd /content/Fashion-U-Want-Virtual-Try-On/openpose && ./build/examples/openpose/openpose.bin "
             f"--image_dir {input_dir} "
             f"--write_json {output_json_path} "
             f"--model_folder ./models/ "
