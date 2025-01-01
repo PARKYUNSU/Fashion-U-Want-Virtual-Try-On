@@ -14,6 +14,11 @@ def load_model(use_hand=False):
     return body_estimation, hand_estimation
 
 
+def adjust_precision(keypoints, precision=3):
+    """좌표 및 confidence 값 정밀도 조정"""
+    return [round(value, precision) if isinstance(value, float) else value for value in keypoints]
+
+
 def map_openpose_to_hrviton(candidate, subset, all_hand_peaks):
     """OpenPose의 Body25와 Hand Keypoints를 HR-VITON JSON 형식으로 변환"""
     json_data = {"version": 1.3, "people": []}
@@ -60,6 +65,11 @@ def map_openpose_to_hrviton(candidate, subset, all_hand_peaks):
 
         # 얼굴 Keypoints는 OpenPose Face 모델 필요
         person_data["face_keypoints_2d"] = [0.0] * 70 * 3  # Placeholder
+
+        # 정밀도 조정
+        person_data["pose_keypoints_2d"] = adjust_precision(person_data["pose_keypoints_2d"])
+        person_data["hand_left_keypoints_2d"] = adjust_precision(person_data["hand_left_keypoints_2d"])
+        person_data["hand_right_keypoints_2d"] = adjust_precision(person_data["hand_right_keypoints_2d"])
 
         json_data["people"].append(person_data)
     return json_data
