@@ -34,11 +34,40 @@ if __name__ == '__main__':
     terminnal_command = "python clothseg.py" 
     os.system(terminnal_command)
 
-    # Get openpose coordinate using posenet
-    print("Get openpose coordinate using posenet\n")
-    terminnal_command = "python openpose2.py"
-    os.system(terminnal_command)
+    # # Get openpose coordinate using posenet
+    # print("Get openpose coordinate using posenet\n")
+    # terminnal_command = "python openpose2.py"
+    # os.system(terminnal_command)
 
+    import os
+    import shutil
+
+    input_path = './input/model.jpg'  # 단일 이미지 파일 경로
+    output_json_path = './HR-VITON/test/test/openpose_json'  # JSON 저장 경로
+    json_filename = "00001_00_keypoints.json"  # 원하는 JSON 파일 이름
+
+    # 출력 디렉토리 생성
+    os.makedirs(output_json_path, exist_ok=True)
+
+    # OpenPose 실행
+    print("Get OpenPose coordinates\n")
+    os.system(f"cd /content/openpose && ./build/examples/openpose/openpose.bin "
+            f"--image_dir {os.path.dirname(input_path)} "
+            f"--write_json {output_json_path} "
+            f"--model_folder ./models/ "
+            f"--display 0")
+
+    # 생성된 JSON 파일 이름 변경
+    # OpenPose는 입력 이미지 이름을 기준으로 JSON 파일을 생성하므로 이를 찾아 변경
+    input_image_name = os.path.basename(input_path)
+    generated_json = os.path.join(output_json_path, f"{os.path.splitext(input_image_name)[0]}_keypoints.json")
+    target_json = os.path.join(output_json_path, json_filename)
+
+    if os.path.exists(generated_json):
+        shutil.move(generated_json, target_json)
+        print(f"JSON file renamed to {target_json}")
+    else:
+        print(f"Error: Expected JSON file {generated_json} not found.")
 
     # Generate semantic segmentation using Graphonomy-Master library
     print("Generate semantic segmentation using Graphonomy-Master library\n")
