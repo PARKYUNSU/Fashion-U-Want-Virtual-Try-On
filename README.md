@@ -67,11 +67,11 @@ Click the badge below to run the demo:
 
 ## Results
 
-<img src="https://github.com/user-attachments/assets/cbea7bcf-c07b-47e1-98d2-594ef749d5a5" width=600>
+<img src="https://github.com/user-attachments/assets/cbea7bcf-c07b-47e1-98d2-594ef749d5a5" width=500>
 
 
 
-<img src="https://github.com/user-attachments/assets/4d3f24c8-94d8-4777-8fdb-ca2079be035d" width=290>
+<img src="https://github.com/user-attachments/assets/4d3f24c8-94d8-4777-8fdb-ca2079be035d" width=200>
 
 ## References
 
