@@ -7,7 +7,7 @@ PyTorch implementation of Fashion U Want: High Resolution Virtual Try-On with GA
 <p align="left">
   <img src="https://img.shields.io/badge/Library-Detectron2-blue" alt="Detectron2"/>
   <img src="https://img.shields.io/badge/Library-EfficientNet%20B7-teal" alt="EfficientNet B7"/>
-  <img src="https://img.shields.io/badge/Library-U^2Net-yellow" alt="U2Net"/>
+  <img src="https://img.shields.io/badge/Library-U2Net-yellow" alt="U2Net"/>
   <img src="https://img.shields.io/badge/Framework-OpenPose-purple" alt="OpenPose"/>
   <img src="https://img.shields.io/badge/Framework-Graphonomy-green" alt="Graphonomy"/>
   <img src="https://img.shields.io/badge/Framework-DeepLabV3%2B-red" alt="DeepLabV3+"/>
