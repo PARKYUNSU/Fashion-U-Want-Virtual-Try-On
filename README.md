@@ -71,7 +71,7 @@ Click the badge below to run the demo:
 
 
 
-<img src="https://github.com/user-attachments/assets/4d3f24c8-94d8-4777-8fdb-ca2079be035d" width=200>
+<img src="https://github.com/user-attachments/assets/4d3f24c8-94d8-4777-8fdb-ca2079be035d" width=250>
 
 ## References
 
