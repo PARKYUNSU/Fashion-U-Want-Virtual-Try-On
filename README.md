@@ -79,7 +79,7 @@ Click the badge below to run the demo:
 - **DeepLabV3+**: Encoder-decoder with atrous separable convolution for semantic image segmentation.  
   Repository: [https://github.com/tensorflow/models/tree/master/research/deeplab](https://github.com/tensorflow/models/tree/master/research/deeplab)
 
-- **U^2Net**: U-Net based architecture for salient object detection and segmentation.  
+- **U2Net**: U-Net based architecture for salient object detection and segmentation.  
   Repository: [https://github.com/xuebinqin/U-2-Net](https://github.com/xuebinqin/U-2-Net)
 
 - **EfficientNet B7**: High-performance image segmentation model, pre-trained on ImageNet.  
