@@ -4,6 +4,7 @@ from PIL import Image
 import json
 import numpy as np
 
+
 # Define the colormap
 colormap = {
     2: [20, 80, 194],

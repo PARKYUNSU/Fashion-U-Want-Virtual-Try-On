@@ -14,6 +14,7 @@ if __name__ == '__main__':
     opt = parser.parse_args()
 
     img=cv2.imread("./input/model.jpg")
+
     # (768, 1024) resize
     if img.shape[:2] != (1024, 768):
         model_img = cv2.resize(img, (768, 1024))
@@ -67,6 +68,7 @@ if __name__ == '__main__':
 
     output_dir = "./HR-VITON/test/test/image"
     os.makedirs(output_dir, exist_ok=True)
+    
     # Remove background image using semantic segmentation mask
     mask_img=cv2.imread('./resized_segmentation_img.png',cv2.IMREAD_GRAYSCALE)
     mask_img=cv2.resize(mask_img,(768,1024))

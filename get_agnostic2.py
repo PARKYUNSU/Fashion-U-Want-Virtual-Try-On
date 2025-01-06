@@ -5,6 +5,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 from tqdm import tqdm
 
+
 def get_img_agnostic(img, parse, pose_data):
     parse_array = np.array(parse)
     parse_head = ((parse_array == 4).astype(np.float32) +

@@ -5,6 +5,7 @@ import json
 import numpy as np
 import os
 
+
 img = Image.open('./resized_segmentation_img.png')
 img_w ,img_h = img.size
 
@@ -17,29 +18,29 @@ for y_idx in range(img.shape[0]):
         if np.array_equal(tmp, [0,0,0]):
             gray_img[y_idx][x_idx] = 0
         if np.array_equal(tmp, [255,0,0]):
-            gray_img[y_idx][x_idx] = 2 #머리카락
+            gray_img[y_idx][x_idx] = 2 # hair
         elif np.array_equal(tmp, [0,0,255]):
-            gray_img[y_idx][x_idx] = 13 #머리
+            gray_img[y_idx][x_idx] = 13 # head
         elif np.array_equal(tmp, [85, 51, 0]):
-            gray_img[y_idx][x_idx] = 10 #목
+            gray_img[y_idx][x_idx] = 10 # neck
         elif np.array_equal(tmp, [255, 85, 0]):
-            gray_img[y_idx][x_idx] = 5 #몸통
+            gray_img[y_idx][x_idx] = 5 # body
         elif np.array_equal(tmp, [0, 255, 255]):
-            gray_img[y_idx][x_idx] = 15 #왼팔
+            gray_img[y_idx][x_idx] = 15 # left arm
         elif np.array_equal(tmp, [51, 170, 221]):
-            gray_img[y_idx][x_idx] = 14 #오른팔
+            gray_img[y_idx][x_idx] = 14 # right arm
         elif np.array_equal(tmp, [0, 85, 85]):
-            gray_img[y_idx][x_idx] = 9 #바지
+            gray_img[y_idx][x_idx] = 9 # pants
         elif np.array_equal(tmp, [0, 0, 85]):
-            gray_img[y_idx][x_idx] = 6 #원피스
+            gray_img[y_idx][x_idx] = 6 # dresser
         elif np.array_equal(tmp, [0, 128, 0]):
-            gray_img[y_idx][x_idx] = 12 #치마
+            gray_img[y_idx][x_idx] = 12 # skirt
         elif np.array_equal(tmp, [177, 255, 85]):
-            gray_img[y_idx][x_idx] = 17 #왼다리
+            gray_img[y_idx][x_idx] = 17 # left leg
         elif np.array_equal(tmp, [85, 255, 170]):
-            gray_img[y_idx][x_idx] = 16 #오른다리
+            gray_img[y_idx][x_idx] = 16 # right leg
         elif np.array_equal(tmp, [0, 119, 221]):
-            gray_img[y_idx][x_idx] = 5 #외투
+            gray_img[y_idx][x_idx] = 5 # outer
         else:
             gray_img[y_idx][x_idx] = 0
 
