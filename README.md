@@ -55,7 +55,7 @@ Fashion-U-Want is a high-resolution virtual try-on system that uses deep learnin
 ## How to Use
 
 1. Click the "Open in Colab" button below.
-2. Follow the instructions in the notebook to upload input images and generate try-on results.
+2. Follow the instructions in the notebook to upload input images and generate try-on result.
 3. View the output directly within the notebook.
 
 ## Fashion-U-Want: Demo
