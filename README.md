@@ -85,10 +85,11 @@ Click the badge below to run the demo:
 - **EfficientNet B7**: High-performance image segmentation model, pre-trained on ImageNet.  
   Repository: [https://huggingface.co/google/efficientnet-b7](https://huggingface.co/google/efficientnet-b7)
 
-### Human Parsing
+### Dense Pose
 - **Detectron2**: Object detection and human parsing framework for research and production.  
   Repository: [https://github.com/facebookresearch/detectron2](https://github.com/facebookresearch/detectron2)
 
+### Human Parsing
 - **Graphonomy**: Universal human parsing framework for garment understanding.  
   Repository: [https://github.com/Gaoyiminggithub/Graphonomy](https://github.com/Gaoyiminggithub/Graphonomy)
 
