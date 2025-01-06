@@ -67,7 +67,7 @@ Click the badge below to run the demo:
 
 ## Results
 
-<img src="https://github.com/user-attachments/assets/7fe47f38-01fa-492f-b75d-972594426bd2" width=700>
+<img src="https://github.com/user-attachments/assets/cbea7bcf-c07b-47e1-98d2-594ef749d5a5" width=600>
 
 
 
