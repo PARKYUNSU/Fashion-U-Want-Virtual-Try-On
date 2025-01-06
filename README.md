@@ -29,21 +29,21 @@ Fashion-U-Want is a high-resolution virtual try-on system that uses deep learnin
       <td align="center">
         <a href="https://github.com/PARKYUNSU">
           <img src="https://github.com/PARKYUNSU.png" width="100px;" alt=""/>
-          <br /><sub><b>Yunsu Park</b></sub>
+          <br /><sub><b>YunsuPark</b></sub>
         </a>
         <br />
       </td>
       <td align="center">
         <a href="https://github.com/navi0728">
           <img src="https://github.com/navi0728.png" width="100px;" alt=""/>
-          <br /><sub><b>Minju Lee</b></sub>
+          <br /><sub><b>MinjuLee</b></sub>
         </a>
         <br />
       </td>
       <td align="center">
         <a href="https://github.com/MyoungJinSon">
           <img src="https://github.com/MyoungJinSon.png" width="100px;" alt=""/>
-          <br /><sub><b>MyoungJin Son</b></sub>
+          <br /><sub><b>MyoungJinSon</b></sub>
         </a>
         <br />
       </td>
