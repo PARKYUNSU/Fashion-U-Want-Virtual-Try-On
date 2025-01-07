@@ -80,9 +80,6 @@ Click the badge below to run the demo:
   Repository: [https://github.com/CMU-Perceptual-Computing-Lab/openpose](https://github.com/CMU-Perceptual-Computing-Lab/openpose)
 
 ### Semantic Segmentation
-- **DeepLabV3+**: Encoder-decoder with atrous separable convolution for semantic image segmentation.  
-  Repository: [https://github.com/tensorflow/models/tree/master/research/deeplab](https://github.com/tensorflow/models/tree/master/research/deeplab)
-
 - **U2Net**: U-Net based architecture for salient object detection and segmentation.  
   Repository: [https://github.com/xuebinqin/U-2-Net](https://github.com/xuebinqin/U-2-Net)
 
@@ -92,6 +89,10 @@ Click the badge below to run the demo:
 ### Dense Pose
 - **Detectron2**: Object detection and human parsing framework for research and production.  
   Repository: [https://github.com/facebookresearch/detectron2](https://github.com/facebookresearch/detectron2)
+
+### Image Parsing
+- **DeepLabV3+**: Encoder-decoder with atrous separable convolution for semantic image segmentation.  
+  Repository: [https://github.com/tensorflow/models/tree/master/research/deeplab](https://github.com/tensorflow/models/tree/master/research/deeplab)
 
 ### Human Parsing
 - **Graphonomy**: Universal human parsing framework for garment understanding.  
