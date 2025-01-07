@@ -47,8 +47,13 @@ if __name__ == '__main__':
             f"--image_dir {input_dir} "
             f"--write_json {output_json_path} "
             f"--model_folder ./models/ "
+            f"--net_resolution '-1x368' "
+            f"--scale_number 4 --scale_gap 0.25 "
+            f"--number_people_max 1 "
+            f"--render_threshold 0.5 "
             f"--render_pose 0 "
             f"--display 0")
+
     generated_json = os.path.join(output_json_path, f"{os.path.splitext(input_image)[0]}_keypoints.json")
     target_json = os.path.join(output_json_path, json_filename)
 
