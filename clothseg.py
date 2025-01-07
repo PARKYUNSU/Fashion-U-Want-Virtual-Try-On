@@ -59,15 +59,30 @@ def process_images(input_path="./input/cloth.jpg",
     # Resize the mask if needed
     mask_resized = cv2.resize(mask, (original_image.shape[1], original_image.shape[0]), interpolation=cv2.INTER_NEAREST)
 
-    # Create output canvas
-    canvas_shape = (1024, 768, 3)
-    output_canvas = np.full(canvas_shape, 255, dtype=np.uint8)
-    mask_canvas = np.zeros((1024, 768), dtype=np.uint8)
+    # Create output canvas with fixed size
+    canvas_shape = (1024, 768, 3)  # Fixed output canvas size (Height x Width x Channels)
+    output_canvas = np.full(canvas_shape, 255, dtype=np.uint8)  # Fill with white background
+    mask_canvas = np.zeros((1024, 768), dtype=np.uint8)  # Mask canvas initialized to black
 
-    # Center the image and mask
+    # Center the original image and mask on the canvas
     h, w, _ = original_image.shape
-    y_offset = (1024 - h) // 2
-    x_offset = (768 - w) // 2
+    y_offset = (canvas_shape[0] - h) // 2  # Calculate vertical offset
+    x_offset = (canvas_shape[1] - w) // 2  # Calculate horizontal offset
+
+    # Check if the image fits into the canvas
+    if h > canvas_shape[0] or w > canvas_shape[1]:
+        print(f"Resizing original image to fit into canvas of size {canvas_shape[:2]}")
+        scaling_factor = min(canvas_shape[0] / h, canvas_shape[1] / w)
+        new_h = int(h * scaling_factor)
+        new_w = int(w * scaling_factor)
+        original_image = cv2.resize(original_image, (new_w, new_h))
+        mask_resized = cv2.resize(mask_resized, (new_w, new_h), interpolation=cv2.INTER_NEAREST)
+
+        h, w = original_image.shape[:2]  # Update dimensions after resizing
+        y_offset = (canvas_shape[0] - h) // 2
+        x_offset = (canvas_shape[1] - w) // 2
+
+    # Place the resized image and mask onto the canvas
     output_canvas[y_offset:y_offset + h, x_offset:x_offset + w] = original_image
     mask_canvas[y_offset:y_offset + h, x_offset:x_offset + w] = mask_resized
 
