@@ -51,6 +51,10 @@ Fashion-U-Want is a high-resolution virtual try-on system that uses deep learnin
   </tbody>
 </table>
 
+## Presentation
+
+The presentation deck is available in the `deck` folder: [Fashion_U_Want_presentation.pdf](https://github.com/PARKYUNSU/Fashion-U-Want-Virtual-Try-On/blob/main/deck/Fashion_U_Want_presentiaon.pdf).
+
 
 ## How to Use
 
