@@ -2,6 +2,10 @@
 
 PyTorch implementation of Fashion U Want: High Resolution Virtual Try-On with GAN models
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3eebdc12-eb59-4cf2-9f6a-e7612e5ec37d" width=400>
+</p>
+
 ### Tech Stack
 
 <p align="left">
