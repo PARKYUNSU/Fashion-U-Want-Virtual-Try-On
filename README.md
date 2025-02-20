@@ -94,7 +94,7 @@ Click the badge below to run the demo:
   Repository: [https://github.com/xuebinqin/U-2-Net](https://github.com/xuebinqin/U-2-Net)
 
 - **EfficientNet B7**: High-performance image segmentation model, pre-trained on ImageNet.  
-  Repository: [https://huggingface.co/google/efficientnet-b7](https://huggingface.co/google/efficientnet-b7)
+  Repository: [https://github.com/Karel911/TRACER](https://github.com/Karel911/TRACER)
 
 ### Dense Pose
 - **Detectron2**: Object detection and human parsing framework for research and production.  
