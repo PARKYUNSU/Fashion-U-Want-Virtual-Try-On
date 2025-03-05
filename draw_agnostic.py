@@ -1,56 +1,45 @@
 import cv2
 import numpy as np
-import os
+import matplotlib.pyplot as plt
+from google.colab.patches import cv2_imshow
 
-def draw_agnostic_mask(img_path, output_path):
-    drawing = False  # 마우스 드로잉 활성화 여부
-    ix, iy = -1, -1  # 마우스 클릭 위치
-
-    def draw_mask(event, x, y, flags, param):
-        nonlocal drawing, ix, iy, mask
-        if event == cv2.EVENT_LBUTTONDOWN:
-            drawing = True
-            ix, iy = x, y
-
-        elif event == cv2.EVENT_MOUSEMOVE:
-            if drawing:
-                cv2.circle(mask, (x, y), 10, (255, 255, 255), -1)  # 흰색 마스크 영역
-
-        elif event == cv2.EVENT_LBUTTONUP:  # 마우스 클릭 해제 시
-            drawing = False
-            cv2.circle(mask, (x, y), 10, (255, 255, 255), -1)
-
+def draw_agnostic_mask_colab(img_path, output_path):
+    """
+    Colab 환경에서 마우스로 Agnostic Mask를 그리는 함수.
+    """
     # 원본 이미지 로드
     img = cv2.imread(img_path)
     if img is None:
         print(f"Error: '{img_path}' Cannot find the File")
         return
 
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # OpenCV 이미지를 RGB로 변환
     h, w, _ = img.shape
-
-    # 빈 마스크 생성
     mask = np.zeros((h, w), dtype=np.uint8)
 
-    # 창 만들기 및 마우스 콜백 설정
-    cv2.namedWindow('Draw Agnostic Mask')
-    cv2.setMouseCallback('Draw Agnostic Mask', draw_mask)
+    # Colab에서는 cv2.imshow() 대신 matplotlib 사용
+    plt.figure(figsize=(8, 8))
+    plt.imshow(img)
+    plt.title("Agnostic Mask를 그릴 영역을 클릭하세요. 완료 후 ENTER 키를 누르세요.")
 
-    while True:
-        display_img = img.copy()
-        display_img[mask == 255] = (0, 0, 255)  # 마스크 영역을 빨간색으로 표시
-        cv2.imshow('Draw Agnostic Mask', display_img)
+    # 사용자 입력 받기 (마우스로 클릭한 좌표를 반환)
+    points = plt.ginput(n=-1, timeout=0)  # 무제한 클릭 가능
+    plt.close()
 
-        key = cv2.waitKey(1) & 0xFF
-        if key == 27: # ESC
-            break
+    # 클릭한 점을 흰색 마스크로 변환
+    for x, y in points:
+        cv2.circle(mask, (int(x), int(y)), 10, (255, 255, 255), -1)
 
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    # 결과 마스크 출력 (Colab에서 보기 위해 `cv2_imshow()` 사용)
+    print("생성된 Agnostic Mask:")
+    cv2_imshow(mask)
+
+    # 마스크 저장
     cv2.imwrite(output_path, mask)
-
-    cv2.destroyAllWindows()
     print(f"Agnostic Saved: {output_path}")
 
+# 직접 실행할 때만 실행하도록 설정
 if __name__ == "__main__":
     img_path = "model.jpg"
     output_path = "HR-VITON/test/test/agnostic-v3.2/custom_agnostic_mask.png"
-    draw_agnostic_mask(img_path, output_path)
+    draw_agnostic_mask_colab(img_path, output_path)
